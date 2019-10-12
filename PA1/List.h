@@ -4,6 +4,7 @@
 
 #ifndef List_h
 #define List_h
+#include <stdio.h>
 
 typedef struct ListObj* List;
 
@@ -13,7 +14,7 @@ void freeList(List* pL); // Frees all heap memory associated with *pL, and sets
                          // *pL to NULL.
 // Access functions -----------------------------------------------------------
 int length(List L);// Returns the number of elements in L.
-int getIndex(List L); // Returns index of cursor element if defined, -1 otherwise.
+int index(List L); // Returns index of cursor element if defined, -1 otherwise.
 int front(List L); // Returns front element of L. Pre: length() > 0
 int back(List L);  // Returns back element of L. Pre: length() > 0
 int get(List L);   // Returns cursor element of L. Pre: length() > 0, index() >= 0
@@ -21,7 +22,7 @@ int equals(List A, List B); // Returns true (1) iff Lists A and B are in same
                             // state, and returns false (0) otherwise.
 
 // Manipulation procedures ----------------------------------------------------
-void clearL(List L);      // Resets L to its original empty state.
+void clear(List L);      // Resets L to its original empty state.
 void moveFront(List L);   // If L is non-empty, sets cursor under the front element,
                           // otherwise does nothing.
 void moveBack(List L);    // If L is non-empty, sets cursor under the back element,

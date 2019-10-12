@@ -4,10 +4,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+//#include <string.h>
 #include "List.h"
 
 #define MAX_LINE 160
+
+extern int strcmp(const char*, const char*);
+extern char *strcpy(char *dest, const char *src);
 
 int main(int argc, char* argv[]){
     FILE *in, *out;
@@ -58,7 +61,7 @@ int main(int argc, char* argv[]){
             movePrev(myList);
             j--;
         }
-        if(getIndex(myList) >= 0){
+        if(index(myList) >= 0){
             insertAfter(myList, i);
         }
         else{
@@ -67,7 +70,7 @@ int main(int argc, char* argv[]){
     }
     moveFront(myList);
     
-    while(getIndex(myList) >= 0){
+    while(index(myList) >= 0){
         fprintf(out, "%s", str[get(myList)]);
         moveNext(myList);
     }
