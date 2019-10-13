@@ -61,6 +61,7 @@ List newList(void){
     List L = malloc(sizeof(ListObj));
     L->front = NULL;
     L->back = NULL;
+    L->cursor = NULL;
     L->cursorIndex = -1;
     L->length = 0;
     return(L);
@@ -278,21 +279,21 @@ void prepend(List L, int data){
         printf("List Error: calling prepend() on NULL List reference\n");
         exit(1);
     }
-    
+    if(L->cursor != NULL){
+        L->cursorIndex++;
+    }
     Node N = newNode(data);
-    
     if(length(L) == 0){
-        L->front = N;
-        L->back = N;
-        L->length++;
+        L->front = L->back = N;
     }
     else
     {
         N->next = L->front;
         L->front->prev = N;
         L->front = N;
-        L->length++;
+
     }
+    L->length++;
     
 }
 
@@ -309,21 +310,21 @@ void append(List L, int data){
     
     if(length(L) == 0){
         L->front = L->back = N;
-        L->length++;
+
     }
     else if(length(L) == 1){
         N->prev = L->front;
         L->front->next = N;
         L->back = N;
-        L->length++;
+        
     }
     else{
         N->prev = L->back;
         L->back->next = N;
         L->back = N;
-        L->length++;
         
     }
+    L->length++;
 }
 
 // insertBefore()
@@ -341,6 +342,9 @@ void insertBefore(List L, int data){
     if(index(L) < 0){
        printf("List Error: insertBefore() called with an undefined index on List");
        exit(1);
+    }
+    if(L->cursor != NULL){
+        L->cursorIndex++;
     }
     if(L->cursor == L->front){
         prepend(L, data);
@@ -397,6 +401,15 @@ void deleteFront(List L){
         printf("List Error: calling deleteFront() on an empty List\n");
         exit(1);
     }
+    if(L->cursor != NULL){
+        if(L->cursor == L->front){
+           L->cursor = NULL;
+           L->cursorIndex = -1;
+        } else {
+           L->cursorIndex--;
+        }
+    }
+    
     Node N = L->front;
     if(length(L) > 1){
         L->front = L->front->next;
@@ -404,7 +417,9 @@ void deleteFront(List L){
     }
     else{
         L->front = L->back = NULL;
+        
     }
+    
     L->length--;
     freeNode(&N);
     
@@ -421,14 +436,19 @@ void deleteBack(List L){
         printf("List Error: calling deleteBack() on an empty List\n");
         exit(1);
     }
+    if(L->cursor != NULL && L->cursor == L->back){
+        L->cursor = NULL;
+        L->cursorIndex = -1;
+    }
     Node N = L->back;
-    if(length(L) > 1){
+    if(L->length > 0){
         L->back = L->back->prev;
         L->back->next = NULL;
     }
     else{
         L->front = L->back = NULL;
     }
+    
     L->length--;
     freeNode(&N);
     
