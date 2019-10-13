@@ -278,6 +278,9 @@ void prepend(List L, int data){
         printf("List Error: calling prepend() on NULL List reference\n");
         exit(1);
     }
+    if(L->cursor != NULL){
+        L->cursorIndex++;
+    }
     
     Node N = newNode(data);
     
@@ -291,7 +294,6 @@ void prepend(List L, int data){
         N->next = L->front;
         L->front->prev = N;
         L->front = N;
-        L->cursorIndex++;
         L->length++;
     }
     
@@ -343,6 +345,9 @@ void insertBefore(List L, int data){
        printf("List Error: insertBefore() called with an undefined index on List");
        exit(1);
     }
+    if(L->cursor != NULL){
+        L->cursorIndex++;
+    }
     if(L->cursor == L->front){
         prepend(L, data);
         return;
@@ -353,7 +358,6 @@ void insertBefore(List L, int data){
         N->prev = L->cursor->prev;
         L->cursor->prev->next = N;
         L->cursor->prev = N;
-        L->cursorIndex++;
         L->length++;
     }
 }
@@ -399,6 +403,16 @@ void deleteFront(List L){
         printf("List Error: calling deleteFront() on an empty List\n");
         exit(1);
     }
+    if(L->cursor != NULL){
+        if(L->cursorIndex == 0){
+            L->cursor = NULL;
+            L->cursorIndex = -1;
+        }
+        else{
+            L->cursorIndex--;
+        }
+        
+    }
     Node N = L->front;
     if(length(L) > 1){
         L->front = L->front->next;
@@ -422,6 +436,10 @@ void deleteBack(List L){
     if(length(L) <= 0){
         printf("List Error: calling deleteBack() on an empty List\n");
         exit(1);
+    }
+    if(L->cursor != NULL && L->cursor == L->back){
+        L->cursor = NULL;
+        L->cursorIndex = -1;
     }
     Node N = L->back;
     if(length(L) > 1){
