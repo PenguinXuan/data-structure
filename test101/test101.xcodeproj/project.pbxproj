@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BE8169A12351A8ED0006B7D4 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = BE8169A02351A8ED0006B7D4 /* main.c */; };
+		BE8169A92351A90B0006B7D4 /* List.c in Sources */ = {isa = PBXBuildFile; fileRef = BE8169A72351A90B0006B7D4 /* List.c */; };
+		BE8169AB2351A91E0006B7D4 /* ListClient.c in Sources */ = {isa = PBXBuildFile; fileRef = BE8169AA2351A91E0006B7D4 /* ListClient.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +25,9 @@
 
 /* Begin PBXFileReference section */
 		BE81699D2351A8ED0006B7D4 /* test101 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test101; sourceTree = BUILT_PRODUCTS_DIR; };
-		BE8169A02351A8ED0006B7D4 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		BE8169A72351A90B0006B7D4 /* List.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = List.c; path = ../../PA1/List.c; sourceTree = "<group>"; };
+		BE8169A82351A90B0006B7D4 /* List.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = List.h; path = ../../PA1/List.h; sourceTree = "<group>"; };
+		BE8169AA2351A91E0006B7D4 /* ListClient.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ListClient.c; path = ../../PA1/ListClient.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +60,9 @@
 		BE81699F2351A8ED0006B7D4 /* test101 */ = {
 			isa = PBXGroup;
 			children = (
-				BE8169A02351A8ED0006B7D4 /* main.c */,
+				BE8169AA2351A91E0006B7D4 /* ListClient.c */,
+				BE8169A72351A90B0006B7D4 /* List.c */,
+				BE8169A82351A90B0006B7D4 /* List.h */,
 			);
 			path = test101;
 			sourceTree = "<group>";
@@ -119,7 +124,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BE8169A12351A8ED0006B7D4 /* main.c in Sources */,
+				BE8169AB2351A91E0006B7D4 /* ListClient.c in Sources */,
+				BE8169A92351A90B0006B7D4 /* List.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
