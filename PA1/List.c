@@ -346,7 +346,6 @@ void insertBefore(List L, int data){
        exit(1);
     }
     if(L->cursor != NULL){
-        printf("insertBefore cursor: %d\n",  L->cursorIndex);
         L->cursorIndex++;
     }
     if(L->cursor == L->front){
