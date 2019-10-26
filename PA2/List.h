@@ -18,7 +18,7 @@ int index(List L); // Returns index of cursor element if defined, -1 otherwise.
 void* front(List L); // Returns front element of L. Pre: length() > 0
 void* back(List L);  // Returns back element of L. Pre: length() > 0
 void* get(List L);   // Returns cursor element of L. Pre: length() > 0, index() >= 0
-int equals(List A, List B); // Returns true (1) iff Lists A and B are in same
+//int equals(List A, List B); // Returns true (1) iff Lists A and B are in same
                             // state, and returns false (0) otherwise.
 
 // Manipulation procedures ----------------------------------------------------
@@ -53,7 +53,7 @@ void printList(FILE* out, List L);  // Prints to the file pointed to by out, a
                                     // string representation of L consisting
                                     // of a space separated sequence of integers,
                                     // with front on left.
-List copyList(List L);  // Returns a new List representing the same integer
+//List copyList(List L);  // Returns a new List representing the same integer
                         // sequence as L. The cursor in the new list is undefined,
                         // regardless of the state of the cursor in L. The state
                         // of L is unchanged.

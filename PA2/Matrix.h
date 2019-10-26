@@ -6,6 +6,8 @@
 #define Matrix_h
 #include <stdio.h>
 
+typedef struct MatrixObj* Matrix;
+
 // Constructors-Destructors ---------------------------------------------------
 Matrix newMatrix(int n); // Returns a reference to a new nXn Matrix object in the zero state.
 void freeMatrix(Matrix* pM); // Frees heap memory associated with *pM, sets *pM to NULL.

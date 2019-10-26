@@ -156,6 +156,7 @@ void* get(List L){
 
 // equals()
 // Returns true (1) iff Lists A and B are in same state, and returns false (0) otherwise.
+/*
 int equals(List A, List B){
     int eq = 0;
     Node N = NULL;
@@ -174,7 +175,7 @@ int equals(List A, List B){
         M = M->next;
     }
     return eq;
-}
+}*/
 
 // clear()
 // Resets L to its original empty state.
@@ -507,13 +508,14 @@ void printList(FILE* out, List L){
     for(curr = L->front; curr != NULL; curr = curr->next){
         fprintf(out, "%d ", curr->data);
     }
-}
-*/
+}*/
+
 // copyList()
 // Returns a new List representing the same integer
 // sequence as L. The cursor in the new list is undefined,
 // regardless of the state of the cursor in L. The state
 // of L is unchanged.
+/*
 List copyList(List L){
     if(L == NULL){
         printf("List Error: calling copyList() on NULL List reference\n");
@@ -529,7 +531,7 @@ List copyList(List L){
         
     }
     return clone;
-}
+}*/
 
 // concatList()
 // Returns a new List which is the concatenation of
