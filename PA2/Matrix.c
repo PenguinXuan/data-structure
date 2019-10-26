@@ -12,6 +12,7 @@
 #include"List.h"
 
 #define MAXSIZE 100000
+double vectorDot(List P, List Q);
 
 // structs --------------------------------------------------------------------
 
@@ -73,8 +74,7 @@ Matrix newMatrix(int n) {
 
 // freeMatrix()
 // Frees heap memory associated with *pM, sets *pM to NULL.
-
-void freeMatrix(Matrix* pM){
+void freeMatrix(Matrix* pM){   // not finished
     if (pM != NULL && *pM != NULL) {
         for (int i = 1; i <= size((*pM)); i++)
         {
@@ -113,45 +113,108 @@ int size(Matrix M){
 
 // NNZ()
 // Return the number of non-zero elements in M.
-
-int NNZ(Matrix M) {
-    if (M == NULL){
+int NNZ(Matrix M)
+{
+    if (M == NULL)
+    {
         printf("Matrix Error: calling NNZ() on NULL Matrix reference\n");
         exit(1);
     }
     return(M->NNZ);
     
 }
-/*
+
 // equals()
 // Return true (1) if matrices A and B are equal, false (0) otherwise.
-int equals(Matrix A, Matrix B){
+
+int equals(Matrix A, Matrix B)
+{
     int eq = 0;
-    
-    if (A == NULL || B == NULL){
+    if (A == NULL || B == NULL)
+    {
         printf("Matrix Error: calling equals() on NULL Matrix reference\n");
         exit(1);
     }
-    
+    eq = (size(A) == size(B));
+    Entry E1 = NULL;
+    Entry E2 = NULL;
+    for (int i = 1; i <= size(A); i++)
+    {
+        if (length(A->rows[i]) > 0 && length(B->rows[i]) > 0)
+        {
+            moveFront(A->rows[i]);
+            moveFront(B->rows[i]);
+            for (int j = 1; j <= size(A); j++)
+            {
+                if (index(A->rows[i]) >= 0 && index(B->rows[i]) >= 0)
+                {
+                    E1 = (Entry)get(A->rows[i]);
+                    E2 = (Entry)get(B->rows[i]);
+                    if (E1->column == E2->column && E1->value != E2->value)
+                    {
+                        eq = 0;
+                    }
+                    
+                }
+                else
+                {
+                    eq = 0;
+                }
+            }
+        }
+        else
+        {
+            break;
+        }
+    }
+    return eq;
 }
 
-*/
 
 // Manipulation procedures -----------------------------------------------------
 
 // makeZero()
 // Re-sets M to the zero Matrix.
-/*
-void makeZero(Matrix M)
+void makeZero(Matrix M)    // not finished
 {
+    if (M == NULL)
+    {
+        printf("Matrix Error: calling makeZero() on NULL Matrix reference\n");
+        exit(1);
+    }
+    Entry temp = NULL;
+    for (int i = 1; i <= size(M); i++)
+    {
+        if (length(M->rows[i]) > 0)
+        {
+            moveFront(M->rows[i]);
+            for (int j = 1; j <= length(M->rows[i]); j++)
+            {
+                temp = (Entry)get(M->rows[i]);
+                if (index(M->rows[i]) >= 0)
+                {
+                    Entry curr = temp;
+                    moveNext(M->rows[i]);
+                    freeEntry(&curr);
+                    
+                }
+            }
+            printf("\n");
+        }
+        else
+        {
+            if (length(M->rows[i+1]) <= 0)
+            {
+                break;
+            }
+        }
+        
+    }
+    M->size = 0;
+    M->NNZ = 0;
+    
     
 }
-*/
-
-
-
-
-
 
 // changeEntry()
 // Changes the ith row, jth column of M to the value x.
@@ -221,24 +284,131 @@ void changeEntry(Matrix M, int i, int j, double x)
      }
 }
 
-
-
 // Matrix Arithmetic operations -------------------------------------------------
 
 // copy()
 // Returns a reference to a new Matrix object having the same entries as A.
-//Matrix copy(Matrix A);
+Matrix copy(Matrix A)
+{
+    if (A == NULL)
+    {
+        printf("Matrix Error: calling copy() on NULL Matrix reference\n");
+        exit(1);
+    }
+    int n = size(A);
+    Matrix R = newMatrix(n);
+    Entry E = NULL;
+    for (int i = 1; i <= size(A); i++)
+    {
+        if (length(A->rows[i]) > 0)
+        {
+            moveFront(A->rows[i]);
+            for (int j = 1; j <= length(A->rows[i]); j++)
+            {
+                if (index(A->rows[i]) >= 0)
+                {
+                     E = (Entry)get(A->rows[i]);
+                     changeEntry(R, i, j, E->value);
+                     moveNext(A->rows[i]);
+                }
+            }
+        }
+        else
+        {
+            if (length(A->rows[i+1]) <= 0)
+            {
+                break;
+            }
+        }
+        
+    }
+    return R;
+    
+}
 
 // transpose()
 // Returns a reference to a new Matrix object representing the transpose
 // of A.
-//Matrix transpose(Matrix A);
-
-
+Matrix transpose(Matrix A)
+{
+    if (A == NULL)
+    {
+        printf("Matrix Error: calling transpose() on NULL Matrix reference\n");
+        exit(1);
+    }
+    int n = size(A);
+    Matrix R = newMatrix(n);
+    Entry curr = NULL;
+    for (int i = 1; i <= size(A); i++)
+    {
+        if (length(A->rows[i]) > 0)
+        {
+            moveFront(A->rows[i]);
+            for (int j = 1; j <= length(A->rows[i]); j++)
+            {
+                if (index(A->rows[i]) >= 0)
+                {
+                     curr = (Entry)get(A->rows[i]);
+                     //printf("***********%d, %.1f\n",  curr->column, curr->value);
+                     //printf("i: %d, j: %d\n", i, curr->column);
+                     changeEntry(R, curr->column, i, curr->value);
+                     moveNext(A->rows[i]);
+                   // printf("&&&&&&&&%d\n", index(A->rows[i]));
+                }
+            }
+        }
+        else
+        {
+            if (length(A->rows[i+1]) <= 0)
+            {
+                break;
+            }
+        }
+        
+    }
+    //freeEntry(&curr);
+    return R;
+    
+}
 
 // scalarMult()
 // Returns a reference to a new Matrix object representing xA.
-//Matrix scalarMult(double x, Matrix A);
+Matrix scalarMult(double x, Matrix A)
+{
+    if (A == NULL)
+    {
+        printf("Matrix Error: calling scalarMult() on NULL Matrix reference\n");
+        exit(1);
+    }
+    int n = size(A);
+    Matrix R = newMatrix(n);
+    Entry E = NULL;
+    for (int i = 1; i <= size(A); i++)
+    {
+        if (length(A->rows[i]) > 0)
+        {
+            moveFront(A->rows[i]);
+            for (int j = 1; j <= length(A->rows[i]); j++)
+            {
+                if (index(A->rows[i]) >= 0)
+                {
+                     E = (Entry)get(A->rows[i]);
+                     changeEntry(R, i, j, x * E->value);
+                     moveNext(A->rows[i]);
+                }
+            }
+        }
+        else
+        {
+            if (length(A->rows[i+1]) <= 0)
+            {
+                break;
+            }
+        }
+        
+    }
+    return R;
+}
 
 
 // sum()
@@ -352,8 +522,8 @@ Matrix sum(Matrix A, Matrix B)
        }
                    
     }
-    freeEntry(&E1);
-    freeEntry(&E2);
+    //freeEntry(&E1);
+    //freeEntry(&E2);
     return R;
 }
 
@@ -387,7 +557,6 @@ Matrix diff(Matrix A, Matrix B)
            {
                if (index(A->rows[i]) >= 0 && index(B->rows[i]) >= 0)
                {
-                    printf("BUG");
                     E1 = (Entry)get(A->rows[i]);
                     E2 = (Entry)get(B->rows[i]);
                    
@@ -471,8 +640,8 @@ Matrix diff(Matrix A, Matrix B)
        }
                    
     }
-    freeEntry(&E1);
-    freeEntry(&E2);
+    //freeEntry(&E1);
+    //freeEntry(&E2);
     return R;
     
     
@@ -483,10 +652,57 @@ Matrix diff(Matrix A, Matrix B)
 // product()
 // Returns a reference to a new Matrix object representing AB.
 // pre: size(A)==size(B)
-//Matrix product(Matrix A, Matrix B); // write transpose first
-
-
-
+Matrix product(Matrix A, Matrix B)
+{
+    if (A == NULL | B == NULL)
+    {
+        printf("List Error: calling product() on NULL Matrix reference\n");
+        exit(1);
+    }
+    if (size(A) != size(B))
+    {
+        printf("Matrix Error: calling product() on different size Matrices\n");
+        exit(1);
+    }
+    int n = size(A);
+    Matrix R = newMatrix(n);
+    Matrix temp = transpose(B);
+    for (int i = 1; i <= size(A); i++)
+    {
+        if (length(A->rows[i]) > 0)
+        {
+            moveFront(A->rows[i]);
+            moveFront(temp->rows[i]);
+            for (int j = 1; j <= size(temp); j++)
+            {
+                if (length(temp->rows[j]) > 0)
+                {
+                    double dotProduct = vectorDot(A->rows[i], temp->rows[j]);
+                    //printf("////////%.1f\n", dotProduct);
+                    if (dotProduct != 0.0)
+                    {
+                        changeEntry(R, i, j, dotProduct);
+                    }
+                }
+                else
+                {
+                    if (length(temp->rows[j+1]) <= 0)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+           if (length(A->rows[i+1]) <= 0)
+           {
+               break;
+           }
+        }
+    }
+    return R;
+}
 
 // printMatrix()
 // Prints a string representation of Matrix M to filestream out. Zero rows
@@ -502,7 +718,7 @@ void printMatrix(FILE* out, Matrix M)
         exit(1);
     }
     Entry curr = NULL;
-    printf("%d\n", NNZ(M));
+    //printf("%d\n", NNZ(M));
     for (int i = 1; i <= size(M); i++)
     {
         if (length(M->rows[i]) > 0)
@@ -533,8 +749,69 @@ void printMatrix(FILE* out, Matrix M)
     
 }
 
+// vectorDot()
+// computes the vector dot product of two matrix rows represented by Lists P and Q.
+// Use this function together with function transpose() to help implement product().
+double vectorDot(List P, List Q)
+{
+    double sum = 0.0;
+    if (P != NULL && Q != NULL)
+    {
+        Entry E1 = NULL;
+        Entry E2 = NULL;
+        moveFront(P);
+        moveFront(Q);
+        //printf("<<<<<<<<<<%d, %d\n",index(P), index(Q));
+        
+        while (index(P) >= 0 && index(Q) >= 0)
+        {
+            E1 = (Entry)get(P);
+            E2 = (Entry)get(Q);
+            //printf("************%d, %d\n", E1->column, E2->column);
+            if (E2->column > E1->column)
+            {
+                //sum += E1->value;
+                //printf("!!!!!!!!!!!!!!!!!!!!!%.1f\n", sum);
+                moveNext(P);
+            }
+            else if (E2->column == E1->column)
+            {
 
-
-
-//double vectorDot(List P, List Q){}
+                //printf("@@@@@@@@@%.1f, %.1f\n", E1->value, E2->value);
+                sum += E1->value * E2->value;
+                //printf("!!!!!!!!!!!!!!!!!!!!!%.1f\n", sum);
+                moveNext(P);
+                moveNext(Q);
+            }
+            else
+            {
+                //sum += E2->value;
+                //printf("!!!!!!!!!!!!!!!!!!!!!%.1f\n", sum);
+                moveNext(Q);
+            }
+    
+        }
+        if (index(P) >= 0 && index(Q) <= 0)
+        {
+            while (index(P) >= 0)
+            {
+                //sum += E1->value;
+                //printf("!!!!!!!!!!!!!!!!!!!!!%.1f\n", sum);
+                moveNext(P);
+            }
+        }
+        if (index(Q) >= 0 && index(P) <= 0)
+        {
+           while (index(Q) >= 0)
+           {
+               //sum += E2->value;
+               //printf("!!!!!!!!!!!!!!!!!!!!!%.1f\n", sum);
+               moveNext(Q);
+           }
+        }
+    }
+    
+    return sum;
+     
+}
 
