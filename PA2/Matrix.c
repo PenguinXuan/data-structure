@@ -266,7 +266,7 @@ Matrix sum(Matrix A, Matrix B)
        {
            moveFront(A->rows[i]);
            moveFront(B->rows[i]);
-           for (int j = 1; j <= length(A->rows[i]); j++)
+           for (int j = 1; j <= size(A); j++)
            {
                if (index(A->rows[i]) >= 0 && index(B->rows[i]) >= 0)
                {
@@ -310,7 +310,7 @@ Matrix sum(Matrix A, Matrix B)
                    {
                       while (index(B->rows[i]) >= 0)
                       {
-                         E2 = (Entry)get(A->rows[i]);
+                         E2 = (Entry)get(B->rows[i]);
                          changeEntry(R, i, j, E2->value);
                          moveNext(B->rows[i]);
                       }
@@ -379,43 +379,37 @@ Matrix diff(Matrix A, Matrix B)
     Entry E2 = NULL;
     for (int i = 1; i <= size(A); i++)
     {
-        printf("<<<<<<<<<<<<<<\n");
        if (length(A->rows[i]) > 0 && length(B->rows[i]) > 0)
        {
            moveFront(A->rows[i]);
            moveFront(B->rows[i]);
-           for (int j = 1; j <= length(A->rows[i]); j++)
+           for (int j = 1; j <= size(A); j++)
            {
                if (index(A->rows[i]) >= 0 && index(B->rows[i]) >= 0)
                {
+                    printf("BUG");
                     E1 = (Entry)get(A->rows[i]);
                     E2 = (Entry)get(B->rows[i]);
-                    printf("????????%d,%d\n", E1->column, E2->column);
+                   
                     if (E1->column == E2->column)
                     {
                         double s = E1->value - E2->value;
-                        printf("A******%.1f\n", s);
                         if (s != 0)
                         {
                             changeEntry(R, i, j, s);
                             moveNext(A->rows[i]);
                             moveNext(B->rows[i]);
-                            //printf("A***%d\n", index(A->rows[i]));
-                            //printf("A***%d\n", index(B->rows[i]));
                         }
                     }
                    else if (E1->column < E2->column)
                    {
                        changeEntry(R, i, j, E1->value);
                        moveNext(A->rows[j]);
-                       printf("B***%d\n", index(A->rows[j]));
                    }
                    else
                    {
                        changeEntry(R, i, j, -1 * E2->value);
                        moveNext(B->rows[j]);
-                       printf("C***%d\n", index(A->rows[i]));
-                       printf("C***%d\n", index(B->rows[i]));
                    }
                }
                
@@ -435,7 +429,7 @@ Matrix diff(Matrix A, Matrix B)
                    {
                       while (index(B->rows[i]) >= 0)
                       {
-                         E2 = (Entry)get(A->rows[i]);
+                         E2 = (Entry)get(B->rows[i]);
                          changeEntry(R, i, j, -1 * E2->value);
                          moveNext(B->rows[i]);
                       }
@@ -477,8 +471,8 @@ Matrix diff(Matrix A, Matrix B)
        }
                    
     }
-    //freeEntry(&E1);
-    //freeEntry(&E2);
+    freeEntry(&E1);
+    freeEntry(&E2);
     return R;
     
     
