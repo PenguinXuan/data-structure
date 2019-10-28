@@ -574,14 +574,14 @@ Matrix diff(Matrix A, Matrix B)
                    {
                       // printf("2<<<<<<<<<<<\n");
                        changeEntry(R, i, E1->column, E1->value);
-                       moveNext(A->rows[j]);
+                       moveNext(A->rows[i]);
                        //printf("@@@@@@@@@@@@@@@@@%d\n", index(A->rows[i]));
                    }
                    else
                    {
                        //printf("3<<<<<<<<<<<\n");
                        changeEntry(R, i, E2->column, -1 * E2->value);
-                       moveNext(B->rows[j]);
+                       moveNext(B->rows[i]);
                       // printf("@@@@@@@@@@@@@@@@@%d\n", index(B->rows[i]));
                        
                    }
