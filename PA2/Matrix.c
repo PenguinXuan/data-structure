@@ -233,6 +233,7 @@ void changeEntry(Matrix M, int i, int j, double x)
             if (x != 0)
             {
                 append(M->rows[i], newEntry(x, j));
+                //printf("1*****%.1f, %d\n", x, j);
                 M->NNZ++;
             }
         }
@@ -242,31 +243,43 @@ void changeEntry(Matrix M, int i, int j, double x)
             Entry curr = (Entry)get(M->rows[i]);
             if (j > curr->column)
             {
-                if (length(M->rows[i]) > 1)
+                while (index(M->rows[i]) >= 0 && j > curr->column)
                 {
-                    while (index(M->rows[i]) >= 0 && j > curr->column)
-                    {
-                        moveNext(M->rows[i]);
-                    }
-                    
+                    moveNext(M->rows[i]);
                 }
-                if (x != 0)
+                if (index(M->rows[i]) < 0)
                 {
-                    if (index(M->rows[i]) >= 0)
-                    {
-                        insertAfter(M->rows[i], newEntry(x, j));
-                        M->NNZ++;
-                    }
-                    else
+                    if (x != 0)
                     {
                         append(M->rows[i], newEntry(x, j));
                         M->NNZ++;
-                        
+                    }
+
+                }
+                else
+                {
+                    if (x != 0)
+                    {
+                        insertBefore(M->rows[i], newEntry(x, j));
+                        //printf("2*****%.1f, %d\n", x, j);
+                        M->NNZ++;
+                    }
+                    
+                }
+            }
+            else if (j < curr->column)
+            {
+                if (index(M->rows[i]) >= 0)
+                {
+                    if (x != 0)
+                    {
+                        insertBefore(M->rows[i], newEntry(x, j));
+                        //printf("4*****%.1f, %d\n", x, j);
+                        M->NNZ++;
                     }
                 }
-                
             }
-            else if (j == curr->column)
+            else
             {
                 if (x == 0)
                 {
@@ -275,12 +288,12 @@ void changeEntry(Matrix M, int i, int j, double x)
                 }
                 else
                 {
-                    printf("//C******%.f\n", x);
                     curr->value = x;
                 }
             }
-           
+                
         }
+            
      }
 }
 
@@ -349,11 +362,8 @@ Matrix transpose(Matrix A)
                 if (index(A->rows[i]) >= 0)
                 {
                      curr = (Entry)get(A->rows[i]);
-                     //printf("***********%d, %.1f\n",  curr->column, curr->value);
-                     //printf("i: %d, j: %d\n", i, curr->column);
                      changeEntry(R, curr->column, i, curr->value);
                      moveNext(A->rows[i]);
-                   // printf("&&&&&&&&%d\n", index(A->rows[i]));
                 }
             }
         }
@@ -428,6 +438,14 @@ Matrix sum(Matrix A, Matrix B)
     }
     int n = size(A);
     Matrix R = newMatrix(n);
+    if (A == B)    // A*A has same reference
+    {
+        R = scalarMult(2.0, A);
+        return R;
+           
+    }
+    
+    //Matrix temp = copy()
     Entry E1 = NULL;
     Entry E2 = NULL;
     for (int i = 1; i <= size(A); i++)
@@ -448,9 +466,9 @@ Matrix sum(Matrix A, Matrix B)
                         if (s != 0)
                         {
                             changeEntry(R, i, j, s);
-                            moveNext(A->rows[i]);
-                            moveNext(B->rows[i]);
                         }
+                        moveNext(A->rows[i]);
+                        moveNext(B->rows[i]);
                     }
                    else if (E1->column < E2->column)
                    {
@@ -553,23 +571,25 @@ Matrix diff(Matrix A, Matrix B)
        {
            moveFront(A->rows[i]);
            moveFront(B->rows[i]);
+           E1 = (Entry)get(A->rows[i]);
+           E2 = (Entry)get(B->rows[i]);
            for (int j = 1; j <= size(A); j++)
            {
                if (index(A->rows[i]) >= 0 && index(B->rows[i]) >= 0)
                {
                     E1 = (Entry)get(A->rows[i]);
                     E2 = (Entry)get(B->rows[i]);
-                   
                     if (E1->column == E2->column)
                     {
                         double s = E1->value - E2->value;
                         if (s != 0)
                         {
                             changeEntry(R, i, j, s);
-                            moveNext(A->rows[i]);
-                            moveNext(B->rows[i]);
                         }
+                        moveNext(A->rows[i]);
+                        moveNext(B->rows[i]);
                     }
+                   
                    else if (E1->column < E2->column)
                    {
                        changeEntry(R, i, j, E1->value);
@@ -678,7 +698,6 @@ Matrix product(Matrix A, Matrix B)
                 if (length(temp->rows[j]) > 0)
                 {
                     double dotProduct = vectorDot(A->rows[i], temp->rows[j]);
-                    //printf("////////%.1f\n", dotProduct);
                     if (dotProduct != 0.0)
                     {
                         changeEntry(R, i, j, dotProduct);
@@ -718,7 +737,6 @@ void printMatrix(FILE* out, Matrix M)
         exit(1);
     }
     Entry curr = NULL;
-    //printf("%d\n", NNZ(M));
     for (int i = 1; i <= size(M); i++)
     {
         if (length(M->rows[i]) > 0)
@@ -761,32 +779,24 @@ double vectorDot(List P, List Q)
         Entry E2 = NULL;
         moveFront(P);
         moveFront(Q);
-        //printf("<<<<<<<<<<%d, %d\n",index(P), index(Q));
         
         while (index(P) >= 0 && index(Q) >= 0)
         {
             E1 = (Entry)get(P);
             E2 = (Entry)get(Q);
-            //printf("************%d, %d\n", E1->column, E2->column);
             if (E2->column > E1->column)
             {
-                //sum += E1->value;
-                //printf("!!!!!!!!!!!!!!!!!!!!!%.1f\n", sum);
                 moveNext(P);
             }
             else if (E2->column == E1->column)
             {
 
-                //printf("@@@@@@@@@%.1f, %.1f\n", E1->value, E2->value);
                 sum += E1->value * E2->value;
-                //printf("!!!!!!!!!!!!!!!!!!!!!%.1f\n", sum);
                 moveNext(P);
                 moveNext(Q);
             }
             else
             {
-                //sum += E2->value;
-                //printf("!!!!!!!!!!!!!!!!!!!!!%.1f\n", sum);
                 moveNext(Q);
             }
     
@@ -795,8 +805,6 @@ double vectorDot(List P, List Q)
         {
             while (index(P) >= 0)
             {
-                //sum += E1->value;
-                //printf("!!!!!!!!!!!!!!!!!!!!!%.1f\n", sum);
                 moveNext(P);
             }
         }
@@ -804,8 +812,6 @@ double vectorDot(List P, List Q)
         {
            while (index(Q) >= 0)
            {
-               //sum += E2->value;
-               //printf("!!!!!!!!!!!!!!!!!!!!!%.1f\n", sum);
                moveNext(Q);
            }
         }
