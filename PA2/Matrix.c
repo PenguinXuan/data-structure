@@ -175,7 +175,7 @@ int equals(Matrix A, Matrix B)
 
 // makeZero()
 // Re-sets M to the zero Matrix.
-void makeZero(Matrix M)    // not finished
+void makeZero(Matrix M) 
 {
     if (M == NULL)
     {
@@ -233,7 +233,7 @@ void changeEntry(Matrix M, int i, int j, double x)
             if (x != 0)
             {
                 append(M->rows[i], newEntry(x, j));
-                //printf("1*****%.1f, %d\n", x, j);
+                //printf("1*****%d,%d,  %.1f\n", i, j, x);
                 M->NNZ++;
             }
         }
@@ -241,60 +241,60 @@ void changeEntry(Matrix M, int i, int j, double x)
         {
             moveFront(M->rows[i]);
             Entry curr = (Entry)get(M->rows[i]);
-            if (j > curr->column)
+            if (j == curr->column)
             {
-                while (index(M->rows[i]) >= 0 && j > curr->column)
+                if (x == 0)
                 {
-                    moveNext(M->rows[i]);
-                }
-                if (index(M->rows[i]) < 0)
-                {
-                    if (x != 0)
-                    {
-                        append(M->rows[i], newEntry(x, j));
-                        M->NNZ++;
-                    }
-
+                    delete(M->rows[i]);
+                    //printf("2*****%d,%d,  %.1f\n", i, j, x);
+                    M->NNZ--;
                 }
                 else
                 {
-                    if (x != 0)
+                    //printf("3*****%d,%d,  %.1f\n", i, j, x);
+                    curr->value = x;
+                }
+            }
+            else
+            {
+                if (x != 0)
+                {
+                    while (index(M->rows[i]) >= 0)
+                    {
+                        curr = (Entry)get(M->rows[i]);
+                        //printf("#############%d, %.1f\n", curr->column, curr->value);
+                        //printf("^^^^^^^^^^^^%d, %d\n", j, curr->column);
+                        if (j > curr->column)
+                        {
+                            moveNext(M->rows[i]);
+                            //printf("@@@@@@@@@@@@@@@@@%d\n", index(M->rows[i]));
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    //printf("@@@@@@@@@@@@@@@@@%d\n", index(M->rows[i]));
+                    if (index(M->rows[i]) < 0)
+                    {
+                        append(M->rows[i], newEntry(x, j));
+                        //printf("4*****%d, %d,  %.1f\n", i, j, x);
+                        M->NNZ++;
+                    }
+                    else
                     {
                         insertBefore(M->rows[i], newEntry(x, j));
-                        //printf("2*****%.1f, %d\n", x, j);
+                        //printf("5*****%d,%d,  %.1f\n", i, j, x);
                         M->NNZ++;
                     }
                     
                 }
             }
-            else if (j < curr->column)
-            {
-                if (index(M->rows[i]) >= 0)
-                {
-                    if (x != 0)
-                    {
-                        insertBefore(M->rows[i], newEntry(x, j));
-                        //printf("4*****%.1f, %d\n", x, j);
-                        M->NNZ++;
-                    }
-                }
-            }
-            else
-            {
-                if (x == 0)
-                {
-                    delete(M->rows[i]);
-                    M->NNZ--;
-                }
-                else
-                {
-                    curr->value = x;
-                }
-            }
-                
-        }
             
-     }
+        }
+        
+    }
+    
 }
 
 // Matrix Arithmetic operations -------------------------------------------------
@@ -357,12 +357,14 @@ Matrix transpose(Matrix A)
         if (length(A->rows[i]) > 0)
         {
             moveFront(A->rows[i]);
+            //printf("###%d\n", length(A->rows[i]));
             for (int j = 1; j <= length(A->rows[i]); j++)
             {
                 if (index(A->rows[i]) >= 0)
                 {
                      curr = (Entry)get(A->rows[i]);
                      changeEntry(R, curr->column, i, curr->value);
+                    //printf("######%d, %d, %.1f\n", curr->column, i, curr->value);
                      moveNext(A->rows[i]);
                 }
             }
@@ -403,7 +405,7 @@ Matrix scalarMult(double x, Matrix A)
                 if (index(A->rows[i]) >= 0)
                 {
                      E = (Entry)get(A->rows[i]);
-                     changeEntry(R, i, j, x * E->value);
+                     changeEntry(R, i, E->column, x * E->value);
                      moveNext(A->rows[i]);
                 }
             }
@@ -465,19 +467,19 @@ Matrix sum(Matrix A, Matrix B)
                         double s = E1->value + E2->value;
                         if (s != 0)
                         {
-                            changeEntry(R, i, j, s);
+                            changeEntry(R, i, E1->column, s);
                         }
                         moveNext(A->rows[i]);
                         moveNext(B->rows[i]);
                     }
                    else if (E1->column < E2->column)
                    {
-                       changeEntry(R, i, j, E1->value);
+                       changeEntry(R, i, E1->column, E1->value);
                        moveNext(A->rows[i]);
                    }
                    else
                    {
-                       changeEntry(R, i, j, E2->value);
+                       changeEntry(R, i, E2->column, E2->value);
                        moveNext(B->rows[i]);
                    }
                }
@@ -489,7 +491,7 @@ Matrix sum(Matrix A, Matrix B)
                        while (index(A->rows[i]) >= 0)
                        {
                            E1 = (Entry)get(A->rows[i]);
-                           changeEntry(R, i, j, E1->value);
+                           changeEntry(R, i, E1->column, E1->value);
                            moveNext(A->rows[i]);
                        }
                        
@@ -499,7 +501,7 @@ Matrix sum(Matrix A, Matrix B)
                       while (index(B->rows[i]) >= 0)
                       {
                          E2 = (Entry)get(B->rows[i]);
-                         changeEntry(R, i, j, E2->value);
+                         changeEntry(R, i, E2->column, E2->value);
                          moveNext(B->rows[i]);
                       }
                        
@@ -571,34 +573,40 @@ Matrix diff(Matrix A, Matrix B)
        {
            moveFront(A->rows[i]);
            moveFront(B->rows[i]);
-           E1 = (Entry)get(A->rows[i]);
-           E2 = (Entry)get(B->rows[i]);
            for (int j = 1; j <= size(A); j++)
            {
                if (index(A->rows[i]) >= 0 && index(B->rows[i]) >= 0)
                {
                     E1 = (Entry)get(A->rows[i]);
                     E2 = (Entry)get(B->rows[i]);
+                    //printf("#############%d, %.1f\n", E1->column, E1->value);
+                    //printf("#############%d, %.1f\n", E2->column, E2->value);
                     if (E1->column == E2->column)
                     {
                         double s = E1->value - E2->value;
+                        //printf("######%.1f\n", s);
                         if (s != 0)
                         {
-                            changeEntry(R, i, j, s);
+                            changeEntry(R, i, E1->column, s);
                         }
+                        //printf("1<<<<<<<<<<<\n");
                         moveNext(A->rows[i]);
                         moveNext(B->rows[i]);
                     }
-                   
                    else if (E1->column < E2->column)
                    {
-                       changeEntry(R, i, j, E1->value);
+                      // printf("2<<<<<<<<<<<\n");
+                       changeEntry(R, i, E1->column, E1->value);
                        moveNext(A->rows[j]);
+                       //printf("@@@@@@@@@@@@@@@@@%d\n", index(A->rows[i]));
                    }
                    else
                    {
-                       changeEntry(R, i, j, -1 * E2->value);
+                       //printf("3<<<<<<<<<<<\n");
+                       changeEntry(R, i, E2->column, -1 * E2->value);
                        moveNext(B->rows[j]);
+                      // printf("@@@@@@@@@@@@@@@@@%d\n", index(B->rows[i]));
+                       
                    }
                }
                
@@ -609,7 +617,8 @@ Matrix diff(Matrix A, Matrix B)
                        while (index(A->rows[i]) >= 0)
                        {
                            E1 = (Entry)get(A->rows[i]);
-                           changeEntry(R, i, j, E1->value);
+                           changeEntry(R, i, E1->column, E1->value);
+                           //printf("4<<<<<<<<<<<\n");
                            moveNext(A->rows[i]);
                        }
                        
@@ -619,7 +628,8 @@ Matrix diff(Matrix A, Matrix B)
                       while (index(B->rows[i]) >= 0)
                       {
                          E2 = (Entry)get(B->rows[i]);
-                         changeEntry(R, i, j, -1 * E2->value);
+                         changeEntry(R, i, E2->column, -1 * E2->value);
+                         //printf("5<<<<<<<<<<<\n");
                          moveNext(B->rows[i]);
                       }
                        
@@ -642,6 +652,7 @@ Matrix diff(Matrix A, Matrix B)
                {
                    E1 = (Entry)get(A->rows[i]);
                    changeEntry(R, i, E1->column, E1->value);
+                   //printf("6<<<<<<<<<<<\n");
                    moveNext(A->rows[i]);
                }
                
@@ -653,6 +664,7 @@ Matrix diff(Matrix A, Matrix B)
               {
                  E2 = (Entry)get(B->rows[i]);
                  changeEntry(R, i, E2->column, -1 * E2->value);
+                // printf("7<<<<<<<<<<<\n");
                  moveNext(B->rows[i]);
               }
                

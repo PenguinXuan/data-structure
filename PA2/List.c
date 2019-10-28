@@ -215,6 +215,11 @@ void moveFront(List L){
 // If L is non-empty, sets cursor under the back element,
 // otherwise does nothing.
 void moveBack(List L){
+    if(L == NULL)
+    {
+        printf("List Error: calling moveFront() on NULL List reference\n");
+        exit(1);
+    }
     if(length(L) > 0){
         L->cursor = L->back;
         L->cursorIndex = length(L) - 1;

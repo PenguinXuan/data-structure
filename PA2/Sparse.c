@@ -60,12 +60,8 @@ int main(int argc, char* argv[])
     int j = 1, k = 0;
     while (fgets(line, MAX_LINE, in) != NULL && j <= m)   // matrix A
     {
-        printf("***%s\n", line);
-        /*
-        if (strlen(line) > 0)
+        if (strcmp(line, "\n") != 0)
         {
-            printf("***%s\n", line);
-            
             k = 0;
             char *token = strtok(line, "\n");
             token = strtok(line, " ");
@@ -75,67 +71,35 @@ int main(int argc, char* argv[])
                 token = strtok(NULL, " ");
             }
             changeEntry(A, atoi(temp[0]), atoi(temp[1]), atof(temp[2]));
-            printf("1<<<<<%d, %d,  %.1f\n", atoi(temp[0]), atoi(temp[1]), atof(temp[2]));
+            //printf("1<<<<<%d, %d,  %.1f\n", atoi(temp[0]), atoi(temp[1]), atof(temp[2]));
+            //printf("\n");
             j++;
         }
-        else
-        {
-            fgets(line, MAX_LINE, in);
-            
-        }*/
     }
-    
-    printf("**************************\n");
-    /*
-    if (strcmp(line, "\n") != 0)
-    {
-        printf("***%s\n", line);
-        k = 0;
-        char *token = strtok(line, "\n");
-        token = strtok(line, " ");
-        while (token != NULL)
-        {
-            temp[k++] = token;
-            token = strtok(NULL, " ");
-        }
-        changeEntry(B, atoi(temp[0]), atoi(temp[1]), atof(temp[2]));
-        //printf("2<<<<<%d, %d,  %.1f\n", atoi(temp[0]), atoi(temp[1]), atof(temp[2]));
-        
-    }*/
-    /*
     j = 0;
-    while (fgets(line, MAX_LINE, in) != NULL)   // matrix B
+    while (fgets(line, MAX_LINE, in) != NULL && j <= l)   // matrix A
     {
-        if (strcmp(line, "\n") == 0)
-        {
-            continue;
-        }
-        printf("***%s\n", line);
-        if (j <= l)
-        {
-            k = 0;
-            char *token = strtok(line, "\n");
-            token = strtok(line, " ");
-            while (token != NULL)
-            {
-                temp[k++] = token;
-                token = strtok(NULL, " ");
-            }
-            changeEntry(B, atoi(temp[0]), atoi(temp[1]), atof(temp[2]));
-            printf("3<<<<<%d, %d,  %.1f\n", atoi(temp[0]), atoi(temp[1]),atof(temp[2]));
-            j++;
-        }
-        else
-        {
-            break;
-        }
-    }*/
-    
-    //printf("A has %d non-zero entries:\n", NNZ(A));
-    //printMatrix(stdout, A);
-    //printf("B has %d non-zero entries:\n", NNZ(B));
-    //printMatrix(stdout, B);
-    /*
+       //printf("#####%s\n", line);
+       if (strcmp(line, "\n") != 0)
+       {
+           k = 0;
+           char *token = strtok(line, "\n");
+           token = strtok(line, " ");
+           while (token != NULL)
+           {
+               temp[k++] = token;
+               token = strtok(NULL, " ");
+           }
+           changeEntry(B, atoi(temp[0]), atoi(temp[1]), atof(temp[2]));
+           //printf("<<<<<%d, %d,  %.1f\n", atoi(temp[0]), atoi(temp[1]), atof(temp[2]));
+           //printf("\n");
+           j++;
+       }
+    }
+    printf("A has %d non-zero entries:\n", NNZ(A));
+    printMatrix(stdout, A);
+    printf("B has %d non-zero entries:\n", NNZ(B));
+    printMatrix(stdout, B);
     printf("(1.5)*A = \n");
     printMatrix(stdout, scalarMult(1.5, A));
     printf("A+B = \n");
@@ -152,9 +116,12 @@ int main(int argc, char* argv[])
     printMatrix(stdout, product(A, B));
     printf("B*B = \n");
     printMatrix(stdout, product(B, B));
-    */
+
     fclose(in);
     fclose(out);
+    
+    free(&A);
+    free(&B);
     return 0;
        
     
