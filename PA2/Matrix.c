@@ -162,10 +162,6 @@ int equals(Matrix A, Matrix B)
                 }
             }
         }
-        else
-        {
-            break;
-        }
     }
     return eq;
 }
@@ -232,7 +228,8 @@ void changeEntry(Matrix M, int i, int j, double x)
         {
             if (x != 0)
             {
-                append(M->rows[i], newEntry(x, j));
+                Entry e = newEntry(x, j);
+                append(M->rows[i], e);
                 //printf("1*****%d,%d,  %.1f\n", i, j, x);
                 M->NNZ++;
             }
@@ -326,14 +323,6 @@ Matrix copy(Matrix A)
                 }
             }
         }
-        else
-        {
-            if (length(A->rows[i+1]) <= 0)
-            {
-                break;
-            }
-        }
-        
     }
     return R;
     
@@ -369,13 +358,7 @@ Matrix transpose(Matrix A)
                 }
             }
         }
-        else
-        {
-            if (length(A->rows[i+1]) <= 0)
-            {
-                break;
-            }
-        }
+
         
     }
     //freeEntry(&curr);
@@ -410,13 +393,7 @@ Matrix scalarMult(double x, Matrix A)
                 }
             }
         }
-        else
-        {
-            if (length(A->rows[i+1]) <= 0)
-            {
-                break;
-            }
-        }
+
         
     }
     return R;
@@ -724,13 +701,7 @@ Matrix product(Matrix A, Matrix B)
                 }
             }
         }
-        else
-        {
-           if (length(A->rows[i+1]) <= 0)
-           {
-               break;
-           }
-        }
+
     }
     return R;
 }
@@ -766,14 +737,7 @@ void printMatrix(FILE* out, Matrix M)
             }
             printf("\n");
         }
-        else
-        {
-            if (length(M->rows[i+1]) <= 0)
-            {
-                break;
-            }
-        }
-        
+
     }
     printf("\n");
     
