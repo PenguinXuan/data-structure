@@ -1,6 +1,10 @@
+//Zhuoxuan Wang
+//CruzID: zwang437
+//PA 2
+
 //-----------------------------------------------------------------------------
-// ListClient.c
-// Test client for List ADT
+// ListTest.c
+// Test for List ADT
 //-----------------------------------------------------------------------------
 #include<stdio.h>
 #include<stdlib.h>

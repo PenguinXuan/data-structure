@@ -17,7 +17,8 @@ double vectorDot(List P, List Q);
 // structs --------------------------------------------------------------------
 
 // private EntryObj type
-typedef struct EntryObj{
+typedef struct EntryObj
+{
     int column;
     double value;
 }EntryObj;
@@ -26,7 +27,8 @@ typedef struct EntryObj{
 typedef EntryObj* Entry;
 
 // private MatrixObj type
-typedef struct MatrixObj{
+typedef struct MatrixObj
+{
     List rows[MAXSIZE];
     int NNZ;
     int size;
@@ -39,7 +41,8 @@ typedef struct MatrixObj{
 // newEntry()
 // Returns reference to new Entry object. Initializes column and value fields.
 // Private.
-Entry newEntry(double entry_value, int c) {
+Entry newEntry(double entry_value, int c)
+{
     Entry E = malloc(sizeof(EntryObj));
     E->column = c;
     E->value = entry_value;
@@ -49,8 +52,10 @@ Entry newEntry(double entry_value, int c) {
 // freeEntry()
 // Frees heap memory pointed to by *pE, sets *pE to NULL.
 // Private.
-void freeEntry(Entry* pE){
-    if(pE != NULL && *pE != NULL){
+void freeEntry(Entry* pE)
+{
+    if(pE != NULL && *pE != NULL)
+    {
         free(*pE);
         *pE = NULL;
     }
@@ -58,7 +63,8 @@ void freeEntry(Entry* pE){
 
 // newMatrix()
 // Returns a reference to a new nXn Matrix object in the zero state.
-Matrix newMatrix(int n) {
+Matrix newMatrix(int n)
+{
     Matrix M = malloc(sizeof(MatrixObj));
     for (int i = 1; i <= n; i++)
     {
@@ -74,8 +80,10 @@ Matrix newMatrix(int n) {
 
 // freeMatrix()
 // Frees heap memory associated with *pM, sets *pM to NULL.
-void freeMatrix(Matrix* pM){   // not finished
-    if (pM != NULL && *pM != NULL) {
+void freeMatrix(Matrix* pM)
+{
+    if (pM != NULL && *pM != NULL)
+    {
         for (int i = 1; i <= size((*pM)); i++)
         {
             if (length((*pM)->rows[i]) > 0)
@@ -103,8 +111,10 @@ void freeMatrix(Matrix* pM){   // not finished
 
 // size()
 // Return the size of square Matrix M.
-int size(Matrix M){
-    if (M == NULL){
+int size(Matrix M)
+{
+    if (M == NULL)
+    {
         printf("Matrix Error: calling size() on NULL Matrix reference\n");
         exit(1);
     }
@@ -197,14 +207,6 @@ void makeZero(Matrix M)
             }
             printf("\n");
         }
-        else
-        {
-            if (length(M->rows[i+1]) <= 0)
-            {
-                break;
-            }
-        }
-        
     }
     M->size = 0;
     M->NNZ = 0;
@@ -230,7 +232,6 @@ void changeEntry(Matrix M, int i, int j, double x)
             {
                 Entry e = newEntry(x, j);
                 append(M->rows[i], e);
-                //printf("1*****%d,%d,  %.1f\n", i, j, x);
                 M->NNZ++;
             }
         }
@@ -243,12 +244,10 @@ void changeEntry(Matrix M, int i, int j, double x)
                 if (x == 0)
                 {
                     delete(M->rows[i]);
-                    //printf("2*****%d,%d,  %.1f\n", i, j, x);
                     M->NNZ--;
                 }
                 else
                 {
-                    //printf("3*****%d,%d,  %.1f\n", i, j, x);
                     curr->value = x;
                 }
             }
@@ -259,29 +258,23 @@ void changeEntry(Matrix M, int i, int j, double x)
                     while (index(M->rows[i]) >= 0)
                     {
                         curr = (Entry)get(M->rows[i]);
-                        //printf("#############%d, %.1f\n", curr->column, curr->value);
-                        //printf("^^^^^^^^^^^^%d, %d\n", j, curr->column);
                         if (j > curr->column)
                         {
                             moveNext(M->rows[i]);
-                            //printf("@@@@@@@@@@@@@@@@@%d\n", index(M->rows[i]));
                         }
                         else
                         {
                             break;
                         }
                     }
-                    //printf("@@@@@@@@@@@@@@@@@%d\n", index(M->rows[i]));
                     if (index(M->rows[i]) < 0)
                     {
                         append(M->rows[i], newEntry(x, j));
-                        //printf("4*****%d, %d,  %.1f\n", i, j, x);
                         M->NNZ++;
                     }
                     else
                     {
                         insertBefore(M->rows[i], newEntry(x, j));
-                        //printf("5*****%d,%d,  %.1f\n", i, j, x);
                         M->NNZ++;
                     }
                     
@@ -556,33 +549,26 @@ Matrix diff(Matrix A, Matrix B)
                {
                     E1 = (Entry)get(A->rows[i]);
                     E2 = (Entry)get(B->rows[i]);
-                    //printf("#############%d, %.1f\n", E1->column, E1->value);
-                    //printf("#############%d, %.1f\n", E2->column, E2->value);
                     if (E1->column == E2->column)
                     {
                         double s = E1->value - E2->value;
-                        //printf("######%.1f\n", s);
                         if (s != 0)
                         {
                             changeEntry(R, i, E1->column, s);
                         }
-                        //printf("1<<<<<<<<<<<\n");
                         moveNext(A->rows[i]);
                         moveNext(B->rows[i]);
                     }
                    else if (E1->column < E2->column)
                    {
-                      // printf("2<<<<<<<<<<<\n");
                        changeEntry(R, i, E1->column, E1->value);
                        moveNext(A->rows[i]);
-                       //printf("@@@@@@@@@@@@@@@@@%d\n", index(A->rows[i]));
                    }
                    else
                    {
-                       //printf("3<<<<<<<<<<<\n");
+    
                        changeEntry(R, i, E2->column, -1 * E2->value);
                        moveNext(B->rows[i]);
-                      // printf("@@@@@@@@@@@@@@@@@%d\n", index(B->rows[i]));
                        
                    }
                }
@@ -595,7 +581,6 @@ Matrix diff(Matrix A, Matrix B)
                        {
                            E1 = (Entry)get(A->rows[i]);
                            changeEntry(R, i, E1->column, E1->value);
-                           //printf("4<<<<<<<<<<<\n");
                            moveNext(A->rows[i]);
                        }
                        
@@ -606,7 +591,6 @@ Matrix diff(Matrix A, Matrix B)
                       {
                          E2 = (Entry)get(B->rows[i]);
                          changeEntry(R, i, E2->column, -1 * E2->value);
-                         //printf("5<<<<<<<<<<<\n");
                          moveNext(B->rows[i]);
                       }
                        
@@ -629,7 +613,6 @@ Matrix diff(Matrix A, Matrix B)
                {
                    E1 = (Entry)get(A->rows[i]);
                    changeEntry(R, i, E1->column, E1->value);
-                   //printf("6<<<<<<<<<<<\n");
                    moveNext(A->rows[i]);
                }
                
@@ -641,7 +624,6 @@ Matrix diff(Matrix A, Matrix B)
               {
                  E2 = (Entry)get(B->rows[i]);
                  changeEntry(R, i, E2->column, -1 * E2->value);
-                // printf("7<<<<<<<<<<<\n");
                  moveNext(B->rows[i]);
               }
                
@@ -690,13 +672,6 @@ Matrix product(Matrix A, Matrix B)
                     if (dotProduct != 0.0)
                     {
                         changeEntry(R, i, j, dotProduct);
-                    }
-                }
-                else
-                {
-                    if (length(temp->rows[j+1]) <= 0)
-                    {
-                        break;
                     }
                 }
             }
