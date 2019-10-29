@@ -1,0 +1,33 @@
+// Zhuoxuan Wang
+// CruzID: zwang437
+// CSE 101, Fall 2019
+// PA2
+
+Included Files:
+
+Sparse.c
+capable of performing fast matrix operations, even on very large matrices, provided they are sparse.
+
+Matrix.c 
+Matrix ADT contains Matrix operations.
+
+Matrix.h
+Contains the prototypes for Matrix functions.
+
+MatrixTest
+test the Matrix ADT.
+
+List.h 
+Contains the prototypes for List functions.
+
+List.c
+A doubly linked list List ADT.
+
+ListTest
+test the List ADT.
+
+Makefile
+Makefile for Pa2.
+
+README
+A description of the files for this program.
