@@ -120,8 +120,8 @@ int main(int argc, char* argv[])
     fclose(in);
     fclose(out);
     
-    free(&A);
-    free(&B);
+    freeMatrix(&A);
+    freeMatrix(&B);
     return 0;
        
     
