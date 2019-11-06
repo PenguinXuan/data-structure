@@ -31,16 +31,16 @@ typedef struct BigIntegerObj{
 BigInteger newBigInteger(){
     BigInteger N = malloc(sizeof(BigIntegerObj));
     N->sign = 0;
+    N->longs = newList();
     return N;
 }
 
 // freeBigInteger()
 // Frees heap memory associated with *pN, sets *pN to NULL.
 void freeBigInteger(BigInteger* pN){
-    /*
     if(pN != NULL && *pN != NULL){
-        freeList(*(pN)->longs);
-    }*/
+        freeList(&(*pN)->longs);
+    }
     free(*pN);
     *pN = NULL;
 }
@@ -85,42 +85,35 @@ void negate(BigInteger N);
 // and an optional sign {+, -} prefix.
 BigInteger stringToBigInteger(char* s){
     BigInteger N = newBigInteger();
-
-
-
-
-
-
-
-/*
-
-    char digits[10];
-
-
-
-
-
-
-
-    int partition_length = length % POWER;
-    if(s[1][0] <= '0' || s[1][0] >= '9')
+    int length = strlen(s);  //  elimited extra \n
+    int start = 0;
+    if(s[0] < '0' || s[0] > '9')
     {
-        if (s[1][0] == '-')
+        if(s[0] == '-') {
             N->sign = -1;
-        else
+            start = 1;
+        } else if(s[0] == '+') {
             N->sign = 1;
+            start = 1;
+        }
     }
-    else
+
+    for(int i = length - 1; i >= start; i -= POWER)
     {
-        strncpy(digits, s[1][1], partition_length);
-        append(N->longs, digits);
+        unsigned long number = 0;
+        int number_begin = 0;
+        if(i -  POWER < start){
+            number_begin = start;
+        } else {
+            number_begin  = i - POWER + 1;
+        }
+        for(int j = number_begin; j <= i; j++) {
+            number *= 10;
+            number += (s[j] - '0');
+        }
+        append(N->longs, number);
 
     }
-    while(s[1] != '\0')
-    {
-        strncpy(digits, s[1][1], partition_length + POWER);
-        prepend(N->longs, digits);
-    }*/
     return N;
 }
 
@@ -131,11 +124,17 @@ BigInteger copy(BigInteger N);
 // add()
 // Places the sum of A and B in the existing BigInteger S, overwriting its
 // current state: S = A + B
-void add(BigInteger S, BigInteger A, BigInteger B);
+void add(BigInteger S, BigInteger A, BigInteger B){
+    printf("");
+}
 
 // sum()
 // Returns a reference to a new BigInteger object representing A + B.
-BigInteger sum(BigInteger A, BigInteger B);
+BigInteger sum(BigInteger A, BigInteger B){
+    BigInteger S = newBigInteger();
+    add(S, A, B);
+    return S;
+}
 
 // subtract()
 // Places the difference of A and B in the existing BigInteger D, overwriting
@@ -158,6 +157,17 @@ BigInteger prod(BigInteger A, BigInteger B);
 // Other operations -----------------------------------------------------------
 // printBigInteger()
 // Prints a base 10 string representation of N to filestream out.
-void printBigInteger(FILE* out, BigInteger N);
+void printBigInteger(FILE* out, BigInteger N)
+{
+    if(N == NULL){
+        printf("List Error: calling printList() on NULL BigInteger reference\n");
+        exit(1);
+    }
+    moveBack(N->longs);
+    while(index(N->longs) >= 0){
+        fprintf(out, "%ld", get(N->longs));
+        movePrev(N->longs);
+    }
+}
 
 

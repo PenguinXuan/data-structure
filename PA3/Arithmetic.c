@@ -9,13 +9,14 @@
 
 #define MAX_LEN 160
 
+char* line_helper(FILE *in, char *line);
 int main(int argc, char * argv[]){
     FILE *in, *out;
-    int len_digits =  0;
     char line[MAX_LEN];
     char *str = NULL;
     BigInteger A = newBigInteger();
     BigInteger B = newBigInteger();
+    BigInteger S, D, P;
     
     // check command line for correct number of arguments
     if( argc != 3 ){
@@ -34,23 +35,50 @@ int main(int argc, char * argv[]){
        printf("Unable to open file %s for writing\n", argv[2]);
        exit(1);
     }
-    fgets(line, MAX_LEN, in);
-    len_digits = atoi(line);
-    str = (char *) malloc(len_digits + 1);
-    fgets(str, len_digits + 1, in);
+
+    char *p;
+
+    str = line_helper(in, line);
+    if ((p=strchr(str, '\n')) != NULL)
+        *p = '\0';
     A = stringToBigInteger(str);
 
-    fgets(line, MAX_LEN, in);
-    len_digits = atoi(line);
-    str = (char *) malloc(len_digits + 1);
-    fgets(str, len_digits + 1, in);
+    str = line_helper(in, line);
+    if ((p=strchr(str, '\n')) != NULL)
+        *p = '\0';
     B = stringToBigInteger(str);
+
+    printBigInteger(stdout, A);
+    printf("\n");
+    printBigInteger(stdout, B);
+    printf("\n");
+
+    S = sum(A, B);
+    //D = diff(A, B);
+    //P = prod(A, B);
 
     /* close files */
     fclose(in);
     fclose(out);
 
+    free(str);
+    //freeBigInteger(&A);
+    //freeBigInteger(&B);
+
     return 0;
+}
+
+char* line_helper(FILE *in, char *line){
+    int len_digits =  0;
+    char *str = NULL;
+
+    fgets(line, MAX_LEN, in);
+    len_digits = atoi(line);
+    str = (char *) malloc(len_digits + 3);
+    fgets(str, len_digits + 3, in);
+
+    return str;
+
 }
 
 
