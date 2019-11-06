@@ -61,28 +61,17 @@ BigInteger stringToBigInteger(char* s);
 // Returns a reference to a new BigInteger object in the same state as N.
 BigInteger copy(BigInteger N);
 
-// add()
-// Places the sum of A and B in the existing BigInteger S, overwriting its
-// current state: S = A + B
-void add(BigInteger S, BigInteger A, BigInteger B);
 
 // sum()
 // Returns a reference to a new BigInteger object representing A + B.
 BigInteger sum(BigInteger A, BigInteger B);
 
-// subtract()
-// Places the difference of A and B in the existing BigInteger D, overwriting
-//itscurrentstate: D=A-B
-void subtract(BigInteger D, BigInteger A, BigInteger B);
+
 
 // diff()
 // Returns a reference to a new BigInteger object representing A - B.
 BigInteger diff(BigInteger A, BigInteger B);
 
-// multiply()
-// Places the product of A and B in the existing BigInteger P, overwriting
-// its current state: P = A*B
-void multiply(BigInteger P, BigInteger A, BigInteger B);
 
 // prod()
 // Returns a reference to a new BigInteger object representing A*B

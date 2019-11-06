@@ -10,11 +10,18 @@
 #include <stdlib.h>
 #include "BigInteger.h"
 #include "List.h"
+#include "math.h"
+
+
 #define POWER 9
-#define BASE 1000000000
+#define BASE 10
 extern char * strtok(char * str, const char * delimiters);
 extern char* strncpy(char * destination, const char * source, size_t num);
 extern size_t strlen ( const char * str );
+
+void add(BigInteger S, BigInteger A, BigInteger B);
+void subtract(BigInteger D, BigInteger A, BigInteger B);
+void multiply(BigInteger P, BigInteger A, BigInteger B);
 
 // structs --------------------------------------------------------------------
 
@@ -87,27 +94,29 @@ BigInteger stringToBigInteger(char* s){
     BigInteger N = newBigInteger();
     int length = strlen(s);  //  elimited extra \n
     int start = 0;
-    if(s[0] < '0' || s[0] > '9')
+    if (s[0] < '0' || s[0] > '9')
     {
-        if(s[0] == '-') {
+        if (s[0] == '-') {
             N->sign = -1;
             start = 1;
-        } else if(s[0] == '+') {
+        } else if (s[0] == '+') {
             N->sign = 1;
             start = 1;
         }
+    } else {
+        N->sign = 1;
     }
 
     for(int i = length - 1; i >= start; i -= POWER)
     {
         unsigned long number = 0;
         int number_begin = 0;
-        if(i -  POWER < start){
+        if (i -  POWER < start){
             number_begin = start;
         } else {
             number_begin  = i - POWER + 1;
         }
-        for(int j = number_begin; j <= i; j++) {
+        for (int j = number_begin; j <= i; j++) {
             number *= 10;
             number += (s[j] - '0');
         }
@@ -124,26 +133,93 @@ BigInteger copy(BigInteger N);
 // add()
 // Places the sum of A and B in the existing BigInteger S, overwriting its
 // current state: S = A + B
-void add(BigInteger S, BigInteger A, BigInteger B){
-    printf("");
+void add(BigInteger S, BigInteger A, BigInteger B) {
+    long carry = 0;
+    long base_to_power = (long)powl(BASE, POWER);
+
+    moveFront(A->longs);
+    moveFront(B->longs);
+
+    while (index(A->longs) >= 0 || index(B->longs) >= 0 || carry > 0) {
+        if (index(A->longs) >= 0) {
+            carry += get(A->longs);
+            moveNext(A->longs);
+        }
+        if (index(B->longs) >= 0) {
+            carry += get(B->longs);
+            moveNext(B->longs);
+        }
+        append(S->longs, carry % base_to_power);
+        carry /= base_to_power;
+    }
+
 }
 
 // sum()
 // Returns a reference to a new BigInteger object representing A + B.
 BigInteger sum(BigInteger A, BigInteger B){
+    if (A == NULL | B == NULL){
+        printf("BigInteger Error: calling sum() on NULL BigInteger reference\n");
+        exit(1);
+    }
     BigInteger S = newBigInteger();
-    add(S, A, B);
+    if (A->sign == B->sign) {
+        add(S, A, B);
+    } else {
+        subtract(S, A, B);
+    }
     return S;
 }
 
 // subtract()
 // Places the difference of A and B in the existing BigInteger D, overwriting
 //itscurrentstate: D=A-B
-void subtract(BigInteger D, BigInteger A, BigInteger B);
+void subtract(BigInteger D, BigInteger A, BigInteger B) {
+    int borrow = 0;
+    long diff = 0;
+    long base_to_power = (long)powl(BASE, POWER);
+
+    moveFront(A->longs);
+    moveFront(B->longs);
+
+    while (index(A->longs) >= 0 || index(B->longs) >= 0) {
+        if (index(A->longs) >= 0) {
+            diff += get(A->longs);
+            moveNext(A->longs);
+        }
+        if (index(B->longs) >= 0) {
+            diff -= get(B->longs);
+            moveNext(B->longs);
+        }
+        if (diff < 0) {
+            borrow = 1;
+        }
+
+
+        //append(S->longs, );
+        //carry /= base_to_power;
+    }
+
+
+
+
+}
 
 // diff()
 // Returns a reference to a new BigInteger object representing A - B.
-BigInteger diff(BigInteger A, BigInteger B);
+BigInteger diff(BigInteger A, BigInteger B) {
+    if (A == NULL | B == NULL){
+        printf("BigInteger Error: calling diff() on NULL BigInteger reference\n");
+        exit(1);
+    }
+    BigInteger D = newBigInteger();
+    if(A->sign == B->sign) {
+        add(D, A, B);
+    } else {
+        subtract(D, A, B);
+    }
+    return D;
+}
 
 // multiply()
 // Places the product of A and B in the existing BigInteger P, overwriting
