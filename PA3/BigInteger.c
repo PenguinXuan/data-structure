@@ -22,6 +22,8 @@ extern size_t strlen ( const char * str );
 void add(BigInteger S, BigInteger A, BigInteger B);
 void subtract(BigInteger D, BigInteger A, BigInteger B);
 void multiply(BigInteger P, BigInteger A, BigInteger B);
+int compareAbs(BigInteger A, BigInteger B);
+void trimZero (BigInteger A);
 
 // structs --------------------------------------------------------------------
 
@@ -66,22 +68,80 @@ int sign(BigInteger N){
 
 // compare()
 // Returns -1 if A<B, 1 if A>B, and 0 if A=B.
-int compare(BigInteger A, BigInteger B);
+int compare(BigInteger A, BigInteger B) {
+    if ((A->sign > B->sign)) {    // 1 > -1
+        return 1;
+    } else if ((A->sign < B->sign)) { // 1 < -1
+        return -1;
+    } else {   // same sign
+       compareAbs(A, B);
+    }
+}
+int compareAbs(BigInteger A, BigInteger B) {
+    if (length(A->longs) > length(B->longs)){ // len(A) > len(B)
+        return 1;
+    } else if (length(A->longs) < length(B->longs)){   // len(A) < len(B)
+        return -1;
+    } else {      // same sign && len(A) == len(B)
+        moveBack(A->longs);
+        moveBack(B->longs);
+        while (index(A->longs) >= 0 && index(B->longs) >= 0) {
+            if (get(A->longs) > get(B->longs)) {
+                return 1;
+            } else if (get(A->longs) < get(B->longs)) {
+                return -1;
+            } else {
+                movePrev(A->longs);
+                movePrev(B->longs);
+            }
+        }
+    }
+    return 0; // A  == B
+
+}
 
 // equals()
 // Return true (1) if A and B are equal, false (0) otherwise.
-//int equals(BigInteger A, BigInteger B);
+int equals(BigInteger A, BigInteger B) {
+    if (A == NULL || B == NULL){
+        printf("BigInteger Error: calling equals() on NULL BigInteger reference\n");
+        exit(1);
+    }
+    if (compare(A, B) == 0) {
+        return 1;
+    }
+    return 0;
+}
 
 // Manipulation procedures ----------------------------------------------------
 
 // makeZero()
 // Re-sets N to the zero state.
-void makeZero(BigInteger N);
+void makeZero(BigInteger N) {
+    if(N == NULL){
+        printf("BigInteger Error: calling makeZero() on NULL BigInteger reference\n");
+        exit(1);
+    }
+    while(length(N->longs) > 0){
+        deleteFront(N->longs);
+    }
+    N->sign = 0;
+}
 
 // negate()
 // Reverses the sign of N: positive <--> negative. Does nothing if N is in the
 // zero state.
-void negate(BigInteger N);
+void negate(BigInteger N) {
+    if(N == NULL){
+        printf("BigInteger Error: calling negate() on NULL BigInteger reference\n");
+        exit(1);
+    }
+    if (N->sign == -1) {
+        N->sign = 1;
+    } else if (N->sign == 1) {
+        N->sign = -1;
+    }
+}
 
 // BigInteger Arithmetic operations -----------------------------------------------
 
@@ -92,7 +152,7 @@ void negate(BigInteger N);
 // and an optional sign {+, -} prefix.
 BigInteger stringToBigInteger(char* s){
     BigInteger N = newBigInteger();
-    int length = strlen(s);  //  elimited extra \n
+    int n = strlen(s);
     int start = 0;
     if (s[0] < '0' || s[0] > '9')
     {
@@ -107,7 +167,7 @@ BigInteger stringToBigInteger(char* s){
         N->sign = 1;
     }
 
-    for(int i = length - 1; i >= start; i -= POWER)
+    for (int i = n - 1; i >= start; i -= POWER)
     {
         unsigned long number = 0;
         int number_begin = 0;
@@ -123,12 +183,26 @@ BigInteger stringToBigInteger(char* s){
         append(N->longs, number);
 
     }
+    trimZero(N);
     return N;
 }
 
 // copy()
 // Returns a reference to a new BigInteger object in the same state as N.
-BigInteger copy(BigInteger N);
+BigInteger copy(BigInteger N) {
+    if(N == NULL){
+        printf("BigInteger Error: calling copy() on NULL BigInteger reference\n");
+        exit(1);
+    }
+    BigInteger M = newBigInteger();
+    M->sign = N->sign;
+
+    moveFront(N->longs);
+    while (index(N->longs) >= 0) {
+        append(M->longs, get(N->longs));
+        moveNext(N->longs);
+    }
+}
 
 // add()
 // Places the sum of A and B in the existing BigInteger S, overwriting its
@@ -158,16 +232,24 @@ void add(BigInteger S, BigInteger A, BigInteger B) {
 // sum()
 // Returns a reference to a new BigInteger object representing A + B.
 BigInteger sum(BigInteger A, BigInteger B){
-    if (A == NULL | B == NULL){
+    if (A == NULL || B == NULL){
         printf("BigInteger Error: calling sum() on NULL BigInteger reference\n");
         exit(1);
     }
     BigInteger S = newBigInteger();
-    if (A->sign == B->sign) {
+    if (A->sign == B->sign) {  // same sign
         add(S, A, B);
-    } else {
-        subtract(S, A, B);
+        S->sign = A->sign;
+    } else {    // different sign
+        if (compareAbs(A, B) > 0) {  // A > B     A - B
+            subtract(S, A, B);
+            S->sign  = A->sign;
+        } else if (compare(A, B) < 0) {   // A < B
+            subtract(S, B, A);
+            S->sign =  B->sign;
+        }
     }
+
     return S;
 }
 
@@ -178,6 +260,31 @@ void subtract(BigInteger D, BigInteger A, BigInteger B) {
     int borrow = 0;
     long diff = 0;
     long base_to_power = (long)powl(BASE, POWER);
+    if(A->sign != B->sign) { // different sign
+        add(D, A, B);
+        if (compare(A, B) > 0) { // A > B
+            D->sign = A->sign;
+        } else if (compare(A, B) < 0) {  // A < B
+            D->sign = B->sign;
+        } else {   // A == B
+            D->sign = 0;
+        }
+    } else {     // same sign
+        if (compare(A, B) > 0) { // A > B
+            subtract(D, A, B);
+        } else if (compare(A, B) < 0) {
+            subtract(D, B, A);
+        } else {
+            D->sign = 0;
+        }
+
+
+
+
+
+
+
+    }
 
     moveFront(A->longs);
     moveFront(B->longs);
@@ -213,22 +320,35 @@ BigInteger diff(BigInteger A, BigInteger B) {
         exit(1);
     }
     BigInteger D = newBigInteger();
-    if(A->sign == B->sign) {
+    if (A->sign == B->sign) {
         add(D, A, B);
-    } else {
-        subtract(D, A, B);
+        D->sign = A->sign;
     }
+
+
+
+    subtract(D, A, B);
     return D;
 }
 
 // multiply()
 // Places the product of A and B in the existing BigInteger P, overwriting
 // its current state: P = A*B
-void multiply(BigInteger P, BigInteger A, BigInteger B);
+void multiply(BigInteger P, BigInteger A, BigInteger B) {
+
+}
 
 // prod()
 // Returns a reference to a new BigInteger object representing A*B
-BigInteger prod(BigInteger A, BigInteger B);
+BigInteger prod(BigInteger A, BigInteger B) {
+    if (A == NULL | B == NULL){
+        printf("BigInteger Error: calling diff() on NULL BigInteger reference\n");
+        exit(1);
+    }
+    BigInteger P = newBigInteger();
+    multiply(P, A, B);
+    return P;
+}
 
 // Other operations -----------------------------------------------------------
 // printBigInteger()
@@ -236,7 +356,7 @@ BigInteger prod(BigInteger A, BigInteger B);
 void printBigInteger(FILE* out, BigInteger N)
 {
     if(N == NULL){
-        printf("List Error: calling printList() on NULL BigInteger reference\n");
+        printf("BigInteger Error: calling printList() on NULL BigInteger reference\n");
         exit(1);
     }
     moveBack(N->longs);
@@ -244,6 +364,18 @@ void printBigInteger(FILE* out, BigInteger N)
         fprintf(out, "%ld", get(N->longs));
         movePrev(N->longs);
     }
+}
+
+void trimZero (BigInteger A) {
+    while (length(A->longs) > 1) {
+        moveBack(A->longs);
+        if (get(A->longs) == 0) {
+            delete(A->longs);
+        } else {
+            break;
+        }
+    }
+
 }
 
 

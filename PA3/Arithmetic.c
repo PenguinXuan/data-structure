@@ -53,6 +53,7 @@ int main(int argc, char * argv[]){
     printBigInteger(stdout, B);
     printf("\n");
 
+    /*
     S = sum(A, B);
     printBigInteger(stdout, S);
     printf("\n");
@@ -60,7 +61,7 @@ int main(int argc, char * argv[]){
     D = diff(A, B);
     printBigInteger(stdout, S);
     printf("\n");
-
+    */
     //P = prod(A, B);
 
     /* close files */
@@ -68,8 +69,8 @@ int main(int argc, char * argv[]){
     fclose(out);
 
     free(str);
-    //freeBigInteger(&A);
-    //freeBigInteger(&B);
+    freeBigInteger(&A);
+    freeBigInteger(&B);
 
     return 0;
 }
