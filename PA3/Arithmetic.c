@@ -53,6 +53,18 @@ int main(int argc, char * argv[]){
     printBigInteger(stdout, B);
     printf("\n");
 
+    printf("*****%d\n", compare(A, B));
+    /*
+    S = sumAbs(A, B);
+    printBigInteger(stdout, S);*/
+    /*
+    D = diffAbs(A, B);
+    printBigInteger(stdout, D);
+    */
+
+
+
+    //printf("*****%d\n", compare(A, B));
     /*
     S = sum(A, B);
     printBigInteger(stdout, S);

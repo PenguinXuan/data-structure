@@ -487,9 +487,9 @@ void delete(List L){
         L->cursor->next->prev = L->cursor->prev;
         L->cursor = NULL;
         L->length--;
+        freeNode(&N);
     }
     L->cursorIndex = -1;
-    freeNode(&N);
 }
 
 // printList()

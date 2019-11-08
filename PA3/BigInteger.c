@@ -19,11 +19,12 @@ extern char * strtok(char * str, const char * delimiters);
 extern char* strncpy(char * destination, const char * source, size_t num);
 extern size_t strlen ( const char * str );
 
-void add(BigInteger S, BigInteger A, BigInteger B);
-void subtract(BigInteger D, BigInteger A, BigInteger B);
-void multiply(BigInteger P, BigInteger A, BigInteger B);
+
+BigInteger sumAbs(BigInteger A, BigInteger B);
+BigInteger diffAbs(BigInteger A, BigInteger B);
 int compareAbs(BigInteger A, BigInteger B);
 void trimZero (BigInteger A);
+
 
 // structs --------------------------------------------------------------------
 
@@ -74,10 +75,17 @@ int compare(BigInteger A, BigInteger B) {
     } else if ((A->sign < B->sign)) { // 1 < -1
         return -1;
     } else {   // same sign
-       compareAbs(A, B);
+        if (A->sign < 0) {
+            return -compareAbs(A, B);
+        } else {
+            return compareAbs(A, B);
+        }
+
     }
 }
 int compareAbs(BigInteger A, BigInteger B) {
+    trimZero(A);
+    trimZero(B);
     if (length(A->longs) > length(B->longs)){ // len(A) > len(B)
         return 1;
     } else if (length(A->longs) < length(B->longs)){   // len(A) < len(B)
@@ -154,8 +162,7 @@ BigInteger stringToBigInteger(char* s){
     BigInteger N = newBigInteger();
     int n = strlen(s);
     int start = 0;
-    if (s[0] < '0' || s[0] > '9')
-    {
+    if (s[0] < '0' || s[0] > '9') {
         if (s[0] == '-') {
             N->sign = -1;
             start = 1;
@@ -208,7 +215,19 @@ BigInteger copy(BigInteger N) {
 // Places the sum of A and B in the existing BigInteger S, overwriting its
 // current state: S = A + B
 void add(BigInteger S, BigInteger A, BigInteger B) {
-    long carry = 0;
+    if (A == NULL || B == NULL){
+        printf("BigInteger Error: calling sum() on NULL BigInteger reference\n");
+        exit(1);
+    }
+
+
+
+}
+
+
+BigInteger sumAbs(BigInteger A, BigInteger B) {
+    BigInteger S = newBigInteger();
+    unsigned long carry = 0;
     long base_to_power = (long)powl(BASE, POWER);
 
     moveFront(A->longs);
@@ -226,8 +245,42 @@ void add(BigInteger S, BigInteger A, BigInteger B) {
         append(S->longs, carry % base_to_power);
         carry /= base_to_power;
     }
+    return S;
+}
+
+BigInteger diffAbs(BigInteger A, BigInteger B) {
+    int borrow = 0;
+    unsigned long a, b;
+    long base_to_power = (long)powl(BASE, POWER);
+    BigInteger D = newBigInteger();
+
+    moveFront(A->longs);
+    moveFront(B->longs);
+    while (index(A->longs) >= 0 || index(B->longs) >= 0 || borrow > 0) {
+        if (index(A->longs) >= 0) {
+            a = get(A->longs);
+            moveNext(A->longs);
+        }
+        if (index(B->longs) >= 0) {
+            b = get(B->longs);
+            moveNext(B->longs);
+        }
+        if (a < b + borrow) {
+            append(D->longs, a + base_to_power - b - borrow);
+            borrow = 1;
+        } else {
+            append(D->longs, a - b - borrow);
+            borrow = 0;
+        }
+        a = 0;
+        b = 0;
+    }
+    trimZero(D);
+    return D;
 
 }
+
+
 
 // sum()
 // Returns a reference to a new BigInteger object representing A + B.
@@ -236,7 +289,7 @@ BigInteger sum(BigInteger A, BigInteger B){
         printf("BigInteger Error: calling sum() on NULL BigInteger reference\n");
         exit(1);
     }
-    BigInteger S = newBigInteger();
+    /*
     if (A->sign == B->sign) {  // same sign
         add(S, A, B);
         S->sign = A->sign;
@@ -248,9 +301,9 @@ BigInteger sum(BigInteger A, BigInteger B){
             subtract(S, B, A);
             S->sign =  B->sign;
         }
-    }
+    }*/
 
-    return S;
+
 }
 
 // subtract()
@@ -367,13 +420,16 @@ void printBigInteger(FILE* out, BigInteger N)
 }
 
 void trimZero (BigInteger A) {
-    while (length(A->longs) > 1) {
+    while (length(A->longs) > 0) {
         moveBack(A->longs);
         if (get(A->longs) == 0) {
             delete(A->longs);
         } else {
             break;
         }
+    }
+    if (length(A->longs) == 0) {
+        A->sign = 0;
     }
 
 }

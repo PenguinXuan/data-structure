@@ -84,7 +84,9 @@ void printBigInteger(FILE* out, BigInteger N);
 
 
 
+BigInteger sumAbs(BigInteger A, BigInteger B);
 
+BigInteger diffAbs(BigInteger A, BigInteger B);
 
 
 
