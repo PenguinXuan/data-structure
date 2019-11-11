@@ -17,3 +17,6 @@ BigInteger.o : BigInteger.c BigInteger.h List.h
 
 List.o : List.c List.h
 	gcc -c -std=c99 -Wall List.c
+
+clean :
+	rm -f Arithmetic Arithmetic.o BigInteger.o List.o
