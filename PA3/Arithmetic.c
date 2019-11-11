@@ -49,36 +49,27 @@ int main(int argc, char * argv[]){
         *p = '\0';
     B = stringToBigInteger(str);
 
-    printBigInteger(stdout, A);
-    printf("\n");
-    printBigInteger(stdout, B);
-    printf("\n");
+    printBigInteger(out, A);
+    printBigInteger(out, B);
 
-
-    printBigInteger(stdout, sum(A, B));
-    printf("\n");
-    printBigInteger(stdout, diff(A, B));
-    printf("\n");
-    printBigInteger(stdout, diff(A, A));
-    printf("\n");
+    printBigInteger(out, sum(A, B));
+    printBigInteger(out, diff(A, B));
+    printBigInteger(out, diff( A, A));
 
     N3 = stringToBigInteger("3");
     N2 = stringToBigInteger("2");
-    printBigInteger(stdout, diff(prod(N3, A), prod(N2, B)));
-    printf("\n");
+    printBigInteger(out, diff(prod(N3, A), prod(N2, B)));
 
-    printBigInteger(stdout, prod(A, B));
-    printf("\n");
-    printBigInteger(stdout, prod(A, A));
-    printf("\n");
-    printBigInteger(stdout, prod(B, B));
-    printf("\n");
+    printBigInteger(out, prod(A, B));
+    printBigInteger(out, prod(A, A));
+    printBigInteger(out, prod(B, B));
+
 
     BigInteger ATo4 = power(A, 4);
     BigInteger BTo5 = power(B, 5);
     BigInteger N9 = stringToBigInteger("9");
     BigInteger N16 = stringToBigInteger("16");
-    printBigInteger(stdout, sum(prod(N9, ATo4), prod(N16, BTo5)));
+    printBigInteger(out, sum(prod(N9, ATo4), prod(N16, BTo5)));
 
 
 

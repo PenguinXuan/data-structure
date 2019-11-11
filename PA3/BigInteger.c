@@ -424,23 +424,28 @@ BigInteger prod(BigInteger A, BigInteger B) {
 // Prints a base 10 string representation of N to filestream out.
 void printBigInteger(FILE* out, BigInteger N)
 {
+    long base_to_power = (long)powl(BASE, POWER);
     if(N == NULL){
         printf("BigInteger Error: calling printList() on NULL BigInteger reference\n");
         exit(1);
     }
     if (N->sign == 0) {
-        printf("0\n");
+        fprintf(out, "0\n\n");
         return;
     }
     moveBack(N->longs);
     if (N->sign < 0) {
-        printf("-");
+        fprintf(out, "-");
     }
     while(index(N->longs) >= 0){
-        fprintf(out, "%ld", get(N->longs));
+        if (index(N->longs) != (length(N->longs) - 1)) {
+            fprintf(out, "%09ld", get(N->longs));
+        } else {
+            fprintf(out, "%ld", get(N->longs));
+        }
         movePrev(N->longs);
     }
-    printf("\n");
+    fprintf(out, "\n\n");
 }
 
 void trimZero (BigInteger A) {
