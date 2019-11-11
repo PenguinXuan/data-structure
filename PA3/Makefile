@@ -2,7 +2,7 @@
 # Makefile for CSE 101 Programming Assignment 3
 #
 #       make                     makes Arithmetic
-#       make                     make ListTest.c
+#	make ListTest            makes ListTest
 #-----------------------------------------------------------------------------
 
 
@@ -16,6 +16,9 @@ Arithmetic.o : Arithmetic.c BigInteger.h List.h
 BigInteger.o : BigInteger.c BigInteger.h List.h
 	gcc -c -std=c99 -Wall BigInteger.c
 
+ListTest: ListTest.o List.o
+	gcc -o ListTest ListTest.o List.o
+
 ListTest.o : ListTest.c List.h
 	gcc -c -std=c99 -Wall ListTest.c
 
@@ -23,4 +26,4 @@ List.o : List.c List.h
 	gcc -c -std=c99 -Wall List.c
 
 clean :
-	rm -f Arithmetic Arithmetic.o BigInteger.o List.o
+	rm -f Arithmetic ListTest Arithmetic.o BigInteger.o ListTest.o List.o
