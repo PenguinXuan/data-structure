@@ -71,19 +71,6 @@ int main(int argc, char * argv[]){
     BigInteger N16 = stringToBigInteger("16");
     printBigInteger(out, sum(prod(N9, ATo4), prod(N16, BTo5)));
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     /* close files */
     fclose(in);
     fclose(out);
