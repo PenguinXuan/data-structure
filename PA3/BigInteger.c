@@ -328,7 +328,7 @@ void subtract(BigInteger D, BigInteger A, BigInteger B) {
 // diff()
 // Returns a reference to a new BigInteger object representing A - B.
 BigInteger diff(BigInteger A, BigInteger B) {
-    if (A == NULL | B == NULL){
+    if (A == NULL || B == NULL){
         printf("BigInteger Error: calling diff() on NULL BigInteger reference\n");
         exit(1);
     }
@@ -409,7 +409,7 @@ void multiplyShift(BigInteger A, int shift) {
 // prod()
 // Returns a reference to a new BigInteger object representing A*B
 BigInteger prod(BigInteger A, BigInteger B) {
-    if (A == NULL | B == NULL){
+    if (A == NULL || B == NULL){
         printf("BigInteger Error: calling diff() on NULL BigInteger reference\n");
         exit(1);
     }
@@ -424,7 +424,6 @@ BigInteger prod(BigInteger A, BigInteger B) {
 // Prints a base 10 string representation of N to filestream out.
 void printBigInteger(FILE* out, BigInteger N)
 {
-    long base_to_power = (long)powl(BASE, POWER);
     if(N == NULL){
         printf("BigInteger Error: calling printList() on NULL BigInteger reference\n");
         exit(1);
