@@ -64,7 +64,7 @@ BigInteger copy(BigInteger N);
 
 // sum()
 // Returns a reference to a new BigInteger object representing A + B.
-BigInteger sum(BigInteger A, BigInteger B);
+BigInteger sum(BigInteger A, BigInteger localB);
 
 
 
@@ -82,11 +82,6 @@ BigInteger prod(BigInteger A, BigInteger B);
 // Prints a base 10 string representation of N to filestream out.
 void printBigInteger(FILE* out, BigInteger N);
 
-
-
-BigInteger sumAbs(BigInteger A, BigInteger B);
-
-BigInteger diffAbs(BigInteger A, BigInteger B);
 
 
 

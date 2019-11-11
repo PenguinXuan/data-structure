@@ -22,8 +22,11 @@ extern size_t strlen ( const char * str );
 
 BigInteger sumAbs(BigInteger A, BigInteger B);
 BigInteger diffAbs(BigInteger A, BigInteger B);
+BigInteger prodOf(BigInteger A, unsigned long c);
+void multiplyShift(BigInteger A, int shift);
 int compareAbs(BigInteger A, BigInteger B);
-void trimZero (BigInteger A);
+void trimZero(BigInteger A);
+void copyHelper(BigInteger A, BigInteger B);
 
 
 // structs --------------------------------------------------------------------
@@ -144,11 +147,7 @@ void negate(BigInteger N) {
         printf("BigInteger Error: calling negate() on NULL BigInteger reference\n");
         exit(1);
     }
-    if (N->sign == -1) {
-        N->sign = 1;
-    } else if (N->sign == 1) {
-        N->sign = -1;
-    }
+    N->sign = -N->sign;
 }
 
 // BigInteger Arithmetic operations -----------------------------------------------
@@ -209,27 +208,32 @@ BigInteger copy(BigInteger N) {
         append(M->longs, get(N->longs));
         moveNext(N->longs);
     }
+    return M;
 }
 
 // add()
 // Places the sum of A and B in the existing BigInteger S, overwriting its
 // current state: S = A + B
 void add(BigInteger S, BigInteger A, BigInteger B) {
-    if (A == NULL || B == NULL){
-        printf("BigInteger Error: calling sum() on NULL BigInteger reference\n");
-        exit(1);
-    }
-
-
-
+    BigInteger temp = sum(A, B);
+    copyHelper(S, temp);
+    freeBigInteger(&temp);
 }
 
 
 BigInteger sumAbs(BigInteger A, BigInteger B) {
-    BigInteger S = newBigInteger();
     unsigned long carry = 0;
     long base_to_power = (long)powl(BASE, POWER);
 
+    if (length(A->longs) == 0 || length(B->longs) == 0) {
+        if (length(A->longs)== 0) {
+            return copy(B);
+        } else {
+            return copy(A);
+        }
+    }
+
+    BigInteger S = newBigInteger();
     moveFront(A->longs);
     moveFront(B->longs);
 
@@ -289,20 +293,26 @@ BigInteger sum(BigInteger A, BigInteger B){
         printf("BigInteger Error: calling sum() on NULL BigInteger reference\n");
         exit(1);
     }
-    /*
-    if (A->sign == B->sign) {  // same sign
-        add(S, A, B);
+    BigInteger S, localB = copy(B);
+    if (A->sign == localB->sign) {
+        S = sumAbs(A, localB);
         S->sign = A->sign;
-    } else {    // different sign
-        if (compareAbs(A, B) > 0) {  // A > B     A - B
-            subtract(S, A, B);
-            S->sign  = A->sign;
-        } else if (compare(A, B) < 0) {   // A < B
-            subtract(S, B, A);
-            S->sign =  B->sign;
+    } else {
+        switch (compareAbs(A, localB)) {
+            case 1:
+                S = diffAbs(A, localB);
+                S->sign = A->sign;
+                break;
+            case -1:
+                S = diffAbs(localB, A);
+                S->sign = localB->sign;
+                break;
+            default:
+                S = newBigInteger();
         }
-    }*/
-
+    }
+    freeBigInteger(&localB);
+    return S;
 
 }
 
@@ -310,59 +320,9 @@ BigInteger sum(BigInteger A, BigInteger B){
 // Places the difference of A and B in the existing BigInteger D, overwriting
 //itscurrentstate: D=A-B
 void subtract(BigInteger D, BigInteger A, BigInteger B) {
-    int borrow = 0;
-    long diff = 0;
-    long base_to_power = (long)powl(BASE, POWER);
-    if(A->sign != B->sign) { // different sign
-        add(D, A, B);
-        if (compare(A, B) > 0) { // A > B
-            D->sign = A->sign;
-        } else if (compare(A, B) < 0) {  // A < B
-            D->sign = B->sign;
-        } else {   // A == B
-            D->sign = 0;
-        }
-    } else {     // same sign
-        if (compare(A, B) > 0) { // A > B
-            subtract(D, A, B);
-        } else if (compare(A, B) < 0) {
-            subtract(D, B, A);
-        } else {
-            D->sign = 0;
-        }
-
-
-
-
-
-
-
-    }
-
-    moveFront(A->longs);
-    moveFront(B->longs);
-
-    while (index(A->longs) >= 0 || index(B->longs) >= 0) {
-        if (index(A->longs) >= 0) {
-            diff += get(A->longs);
-            moveNext(A->longs);
-        }
-        if (index(B->longs) >= 0) {
-            diff -= get(B->longs);
-            moveNext(B->longs);
-        }
-        if (diff < 0) {
-            borrow = 1;
-        }
-
-
-        //append(S->longs, );
-        //carry /= base_to_power;
-    }
-
-
-
-
+   BigInteger temp = diff(A, B);
+   copyHelper(D, temp);
+   freeBigInteger(&temp);
 }
 
 // diff()
@@ -372,23 +332,78 @@ BigInteger diff(BigInteger A, BigInteger B) {
         printf("BigInteger Error: calling diff() on NULL BigInteger reference\n");
         exit(1);
     }
-    BigInteger D = newBigInteger();
-    if (A->sign == B->sign) {
-        add(D, A, B);
-        D->sign = A->sign;
+    BigInteger temp = copy(B);
+    negate(temp);
+    BigInteger res  = sum(A, temp);
+    freeBigInteger(&temp);
+    return res;
+}
+
+BigInteger prodOf(BigInteger A, unsigned long c) {
+    unsigned long long res = 0;
+    unsigned long carry = 0;
+    long base_to_power = (long)powl(BASE, POWER);
+
+    BigInteger p = newBigInteger();
+    if (c == 0) {
+        p->sign = 0;
+        return p;
+    } else if (c == 1) {
+        freeBigInteger(&p);
+        return copy(A);
+    } else {
+        moveFront(A->longs);
+        while (index(A->longs) >= 0) {
+            res = get(A->longs) * c + carry;
+            append(p->longs, res % base_to_power);
+            carry = res / base_to_power;
+            moveNext(A->longs);
+        }
+        if (carry > 0) {
+            append(p->longs, carry);
+        }
     }
 
-
-
-    subtract(D, A, B);
-    return D;
+    return p;
 }
 
 // multiply()
 // Places the product of A and B in the existing BigInteger P, overwriting
 // its current state: P = A*B
 void multiply(BigInteger P, BigInteger A, BigInteger B) {
+    if (A->sign == 0 || B->sign == 0) {
+        P->sign = 0;
+        return;
+    }
+    BigInteger temp, localB = copy(B);
+    BigInteger res = newBigInteger();
+    int shift = 0;
+    moveFront(localB->longs);
+    while (index(localB->longs) >= 0) {
+        temp = prodOf(A, get(localB->longs));
+        multiplyShift(temp, shift);
+        BigInteger res1 = sumAbs(res, temp);
+        freeBigInteger(&res);
+        freeBigInteger(&temp);
+        res = res1;
+        moveNext(localB->longs);
+        shift++;
 
+    }
+    copyHelper(P, res);
+    P->sign = A->sign * localB->sign;
+    freeBigInteger(&res);
+    freeBigInteger(&localB);
+
+}
+
+void multiplyShift(BigInteger A, int shift) {
+    if (length(A->longs) == 0) {
+        return;
+    }
+    while (shift-- > 0) {
+        prepend(A->longs, 0);
+    }
 }
 
 // prod()
@@ -400,6 +415,7 @@ BigInteger prod(BigInteger A, BigInteger B) {
     }
     BigInteger P = newBigInteger();
     multiply(P, A, B);
+
     return P;
 }
 
@@ -412,11 +428,19 @@ void printBigInteger(FILE* out, BigInteger N)
         printf("BigInteger Error: calling printList() on NULL BigInteger reference\n");
         exit(1);
     }
+    if (N->sign == 0) {
+        printf("0\n");
+        return;
+    }
     moveBack(N->longs);
+    if (N->sign < 0) {
+        printf("-");
+    }
     while(index(N->longs) >= 0){
         fprintf(out, "%ld", get(N->longs));
         movePrev(N->longs);
     }
+    printf("\n");
 }
 
 void trimZero (BigInteger A) {
@@ -430,6 +454,19 @@ void trimZero (BigInteger A) {
     }
     if (length(A->longs) == 0) {
         A->sign = 0;
+    }
+}
+
+void copyHelper(BigInteger A, BigInteger B) {
+    while (length(A->longs) > 0) {
+        deleteFront(A->longs);
+    }
+
+    A->sign = B->sign;
+    moveFront(B->longs);
+    while (index(B->longs) >= 0) {
+        append(A->longs, get(B->longs));
+        moveNext(B->longs);
     }
 
 }

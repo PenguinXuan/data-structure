@@ -10,14 +10,15 @@
 #define MAX_LEN 160
 
 char* line_helper(FILE *in, char *line);
+BigInteger power(BigInteger A, int c);
 int main(int argc, char * argv[]){
     FILE *in, *out;
     char line[MAX_LEN];
     char *str = NULL;
     BigInteger A = newBigInteger();
     BigInteger B = newBigInteger();
-    BigInteger S, D, P;
-    
+    BigInteger N3, N2;
+
     // check command line for correct number of arguments
     if( argc != 3 ){
      printf("Usage: %s <input file> <output file>\n", argv[0]);
@@ -53,28 +54,44 @@ int main(int argc, char * argv[]){
     printBigInteger(stdout, B);
     printf("\n");
 
-    printf("*****%d\n", compare(A, B));
-    /*
-    S = sumAbs(A, B);
-    printBigInteger(stdout, S);*/
-    /*
-    D = diffAbs(A, B);
-    printBigInteger(stdout, D);
-    */
 
-
-
-    //printf("*****%d\n", compare(A, B));
-    /*
-    S = sum(A, B);
-    printBigInteger(stdout, S);
+    printBigInteger(stdout, sum(A, B));
+    printf("\n");
+    printBigInteger(stdout, diff(A, B));
+    printf("\n");
+    printBigInteger(stdout, diff(A, A));
     printf("\n");
 
-    D = diff(A, B);
-    printBigInteger(stdout, S);
+    N3 = stringToBigInteger("3");
+    N2 = stringToBigInteger("2");
+    printBigInteger(stdout, diff(prod(N3, A), prod(N2, B)));
     printf("\n");
-    */
-    //P = prod(A, B);
+
+    printBigInteger(stdout, prod(A, B));
+    printf("\n");
+    printBigInteger(stdout, prod(A, A));
+    printf("\n");
+    printBigInteger(stdout, prod(B, B));
+    printf("\n");
+
+    BigInteger ATo4 = power(A, 4);
+    BigInteger BTo5 = power(B, 5);
+    BigInteger N9 = stringToBigInteger("9");
+    BigInteger N16 = stringToBigInteger("16");
+    printBigInteger(stdout, sum(prod(N9, ATo4), prod(N16, BTo5)));
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /* close files */
     fclose(in);
@@ -100,4 +117,11 @@ char* line_helper(FILE *in, char *line){
 
 }
 
+BigInteger power(BigInteger A, int c) {
+    BigInteger temp = stringToBigInteger("1");
+    for (int i = 0; i < c; i++) {
+        temp = prod(A, temp);
+    }
+    return temp;
 
+}
