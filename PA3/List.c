@@ -61,6 +61,7 @@ List newList(void){
     List L = malloc(sizeof(ListObj));
     L->front = NULL;
     L->back = NULL;
+    L->cursor = NULL;
     L->cursorIndex = -1;
     L->length = 0;
     return(L);
