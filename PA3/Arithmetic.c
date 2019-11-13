@@ -15,7 +15,7 @@ int main(int argc, char * argv[]){
     FILE *in, *out;
     char line[MAX_LEN];
     char *str = NULL;
-    BigInteger A, B, C, D, E, F, G, H, I, J;
+    BigInteger A, B, C, D, E, F, G, H, I, J, K, L;
     // check command line for correct number of arguments
     if( argc != 3 ){
      printf("Usage: %s <input file> <output file>\n", argv[0]);
@@ -79,8 +79,11 @@ int main(int argc, char * argv[]){
     BigInteger N9 = stringToBigInteger("9");
     BigInteger N16 = stringToBigInteger("16");
 
-    J = sum(prod(N9, ATo4), prod(N16, BTo5));
-    printBigInteger(out, J);
+    J = prod(N9, ATo4);
+    K = prod(N16, BTo5);
+
+    L = sum(J, K);
+    printBigInteger(out, L);
 
     /* close files */
     fclose(in);
@@ -97,6 +100,8 @@ int main(int argc, char * argv[]){
     freeBigInteger(&H);
     freeBigInteger(&I);
     freeBigInteger(&J);
+    freeBigInteger(&K);
+    freeBigInteger(&L);
     freeBigInteger(&N3);
     freeBigInteger(&N2);
     freeBigInteger(&ATo4);
