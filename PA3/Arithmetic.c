@@ -15,7 +15,7 @@ int main(int argc, char * argv[]){
     FILE *in, *out;
     char line[MAX_LEN];
     char *str = NULL;
-    BigInteger A, B, C, D, E, F, G, H, I, J, K, L;
+    BigInteger A, B, C, D, E, F, G, H, I, J, K, L, M, N;
     // check command line for correct number of arguments
     if( argc != 3 ){
      printf("Usage: %s <input file> <output file>\n", argv[0]);
@@ -36,15 +36,15 @@ int main(int argc, char * argv[]){
 
     char *p;
 
-    str = line_helper(in, line);
-    if ((p=strchr(str, '\n')) != NULL)
+    char* str1 = line_helper(in, line);
+    if ((p=strchr(str1, '\n')) != NULL)
         *p = '\0';
-    A = stringToBigInteger(str);
+    A = stringToBigInteger(str1);
 
-    str = line_helper(in, line);
-    if ((p=strchr(str, '\n')) != NULL)
+    char* str2 = line_helper(in, line);
+    if ((p=strchr(str2, '\n')) != NULL)
         *p = '\0';
-    B = stringToBigInteger(str);
+    B = stringToBigInteger(str2);
 
     printBigInteger(out, A);
     printBigInteger(out, B);
@@ -61,17 +61,19 @@ int main(int argc, char * argv[]){
     BigInteger N3 = stringToBigInteger("3");
     BigInteger N2 = stringToBigInteger("2");
 
-    F = diff(prod(N3, A), prod(N2, B));
-    printBigInteger(out, F);
-
-    G = prod(A, B);
-    printBigInteger(out, G);
-
-    H = prod(A, A);
+    F = prod(N3, A);
+    G = prod(N2, B);
+    H = diff(F, G);
     printBigInteger(out, H);
 
-    I = prod(B, B);
+    I = prod(A, B);
     printBigInteger(out, I);
+
+    J = prod(A, A);
+    printBigInteger(out, J);
+
+    K = prod(B, B);
+    printBigInteger(out, K);
 
 
     BigInteger ATo4 = power(A, 4);
@@ -79,11 +81,11 @@ int main(int argc, char * argv[]){
     BigInteger N9 = stringToBigInteger("9");
     BigInteger N16 = stringToBigInteger("16");
 
-    J = prod(N9, ATo4);
-    K = prod(N16, BTo5);
+    L = prod(N9, ATo4);
+    M = prod(N16, BTo5);
 
-    L = sum(J, K);
-    printBigInteger(out, L);
+    N = sum(L, M);
+    printBigInteger(out, N);
 
     /* close files */
     fclose(in);
@@ -102,6 +104,8 @@ int main(int argc, char * argv[]){
     freeBigInteger(&J);
     freeBigInteger(&K);
     freeBigInteger(&L);
+    freeBigInteger(&M);
+    freeBigInteger(&N);
     freeBigInteger(&N3);
     freeBigInteger(&N2);
     freeBigInteger(&ATo4);
@@ -135,7 +139,9 @@ BigInteger power(BigInteger A, int c) {
     BigInteger temp = stringToBigInteger("1");
     while (c > 0) {
         if (c & 1) {
-            temp = prod(A, temp);
+            BigInteger t1 = prod(A, temp);
+            freeBigInteger(&temp);
+            temp = t1;
         }
         c >>= 1;
         A = prod(A, A);
