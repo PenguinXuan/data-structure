@@ -114,7 +114,7 @@ BigInteger power(BigInteger A, int c) {
             temp = prod(A, temp);
         }
         c >>= 1;
-        temp = prod(A, A);
+        A = prod(A, A);
     }
     return temp;
 }
