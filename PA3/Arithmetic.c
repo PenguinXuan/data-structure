@@ -15,10 +15,7 @@ int main(int argc, char * argv[]){
     FILE *in, *out;
     char line[MAX_LEN];
     char *str = NULL;
-    BigInteger A = newBigInteger();
-    BigInteger B = newBigInteger();
-    BigInteger N3, N2;
-
+    BigInteger A, B, C, D, E, F, G, H, I, J;
     // check command line for correct number of arguments
     if( argc != 3 ){
      printf("Usage: %s <input file> <output file>\n", argv[0]);
@@ -52,24 +49,38 @@ int main(int argc, char * argv[]){
     printBigInteger(out, A);
     printBigInteger(out, B);
 
-    printBigInteger(out, sum(A, B));
-    printBigInteger(out, diff(A, B));
-    printBigInteger(out, diff( A, A));
+    C = sum(A, B);
+    printBigInteger(out, C);
 
-    N3 = stringToBigInteger("3");
-    N2 = stringToBigInteger("2");
-    printBigInteger(out, diff(prod(N3, A), prod(N2, B)));
+    D = diff(A, B);
+    printBigInteger(out, D);
 
-    printBigInteger(out, prod(A, B));
-    printBigInteger(out, prod(A, A));
-    printBigInteger(out, prod(B, B));
+    E = diff( A, A);
+    printBigInteger(out, E);
+
+    BigInteger N3 = stringToBigInteger("3");
+    BigInteger N2 = stringToBigInteger("2");
+
+    F = diff(prod(N3, A), prod(N2, B));
+    printBigInteger(out, F);
+
+    G = prod(A, B);
+    printBigInteger(out, G);
+
+    H = prod(A, A);
+    printBigInteger(out, H);
+
+    I = prod(B, B);
+    printBigInteger(out, I);
 
 
     BigInteger ATo4 = power(A, 4);
     BigInteger BTo5 = power(B, 5);
     BigInteger N9 = stringToBigInteger("9");
     BigInteger N16 = stringToBigInteger("16");
-    printBigInteger(out, sum(prod(N9, ATo4), prod(N16, BTo5)));
+
+    J = sum(prod(N9, ATo4), prod(N16, BTo5));
+    printBigInteger(out, J);
 
     /* close files */
     fclose(in);
@@ -78,6 +89,14 @@ int main(int argc, char * argv[]){
     free(str);
     freeBigInteger(&A);
     freeBigInteger(&B);
+    freeBigInteger(&C);
+    freeBigInteger(&D);
+    freeBigInteger(&E);
+    freeBigInteger(&F);
+    freeBigInteger(&G);
+    freeBigInteger(&H);
+    freeBigInteger(&I);
+    freeBigInteger(&J);
     freeBigInteger(&N3);
     freeBigInteger(&N2);
     freeBigInteger(&ATo4);
