@@ -75,7 +75,7 @@ int main(int argc, char * argv[]){
     fclose(in);
     fclose(out);
 
-    free(&str);
+    free(str);
     freeBigInteger(&A);
     freeBigInteger(&B);
     freeBigInteger(&N3);
