@@ -31,4 +31,4 @@ List.o : List.c List.h
 	gcc -c -std=c99 -Wall List.c
 
 clean :
-	rm -f Arithmetic ListTest Arithmetic.o BigInteger.o ListTest.o List.o
+	rm -f Arithmetic BigIntegerTest ListTest Arithmetic.o BigIntegerTest.o BigInteger.o ListTest.o List.o
