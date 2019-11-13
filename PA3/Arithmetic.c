@@ -14,7 +14,6 @@ BigInteger power(BigInteger A, int c);
 int main(int argc, char * argv[]){
     FILE *in, *out;
     char line[MAX_LEN];
-    char *str = NULL;
     BigInteger A, B, C, D, E, F, G, H, I, J, K, L, M, N;
     // check command line for correct number of arguments
     if( argc != 3 ){
@@ -35,7 +34,6 @@ int main(int argc, char * argv[]){
     }
 
     char *p;
-
     char* str1 = line_helper(in, line);
     if ((p=strchr(str1, '\n')) != NULL)
         *p = '\0';
@@ -91,7 +89,8 @@ int main(int argc, char * argv[]){
     fclose(in);
     fclose(out);
 
-    free(str);
+    free(str1);
+    free(str2);
     freeBigInteger(&A);
     freeBigInteger(&B);
     freeBigInteger(&C);
