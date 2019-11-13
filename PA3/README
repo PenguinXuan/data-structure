@@ -1,0 +1,33 @@
+// Zhuoxuan Wang
+// CruzID: zwang437
+// CSE 101, Fall 2019
+// PA3
+
+Included Files:
+
+Arithmetic.c
+A top level client that uses the exported operations in BigInteger.c
+
+BigIntegerTest
+test the BigInteger ADT.
+
+BigInteger.c
+BigInteger ADT capable of performing arithmetic operations on arbitrarily large signed integers.
+
+BigInteger.h
+Contains the prototypes for BigInteger functions.
+
+ListTest
+test the List ADT
+
+List.c
+A doubly linked list List ADT.
+
+List.h 
+Contains the prototypes for List functions.
+
+Makefile
+Makefile for Pa2.
+
+README
+A description of the files for this program.
