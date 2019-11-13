@@ -10,6 +10,7 @@
 
 // Exported type -------------------------------------------------------------
 typedef struct BigIntegerObj* BigInteger; // BigInteger reference type
+
 // Constructors-Destructors ---------------------------------------------------
 BigInteger newBigInteger(); // Returns a reference to a new BigInteger object in the zero state.
 void freeBigInteger(BigInteger* pN); // Frees heap memory associated with *pN, sets *pN to NULL.
@@ -31,8 +32,17 @@ BigInteger stringToBigInteger(char* s); // Returns a reference to a new BigInteg
                                         // Pre: s is a non-empty string containing only base ten digits {0,1,2,3,4,5,6,7,8,9}
                                         // and an optional sign {+, -} prefix.
 BigInteger copy(BigInteger N); // Returns a reference to a new BigInteger object in the same state as N.
+
+void add(BigInteger S, BigInteger A, BigInteger B); // Places the sum of A and B in the existing BigInteger S, overwriting its
+                                                    // current state: S = A + B
+
 BigInteger sum(BigInteger A, BigInteger B); // Returns a reference to a new BigInteger object representing A + B.
+
+void subtract(BigInteger D, BigInteger A, BigInteger B);  // Places the difference of A and B in the existing BigInteger D, overwriting
+                                                          //its current state: D=A-B
 BigInteger diff(BigInteger A, BigInteger B); // Returns a reference to a new BigInteger object representing A - B.
+void multiply(BigInteger P, BigInteger A, BigInteger B); // Places the product of A and B in the existing BigInteger P, overwriting
+                                                         // its current state: P = A*B
 BigInteger prod(BigInteger A, BigInteger B); // Returns a reference to a new BigInteger object representing A*B.
 
 // Other operations -----------------------------------------------------------
