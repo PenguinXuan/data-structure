@@ -102,10 +102,19 @@ char* line_helper(FILE *in, char *line){
 }
 
 BigInteger power(BigInteger A, int c) {
+    /*
     BigInteger temp = stringToBigInteger("1");
     for (int i = 0; i < c; i++) {
         temp = prod(A, temp);
     }
+    return temp;*/
+    BigInteger temp = stringToBigInteger("1");
+    while (c > 0) {
+        if (c & 1) {
+            temp = prod(A, temp);
+        }
+        c >>= 1;
+        temp = prod(A, A);
+    }
     return temp;
-
 }
