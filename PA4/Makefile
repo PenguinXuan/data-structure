@@ -2,6 +2,7 @@
 # Makefile for CSE 101 Programming Assignment 4
 #
 #       make                     makes FindPath
+#       make GraphTest           makes GraphTest
 #-----------------------------------------------------------------------------
 
 FindPath : FindPath.o Graph.o List.o
@@ -9,6 +10,12 @@ FindPath : FindPath.o Graph.o List.o
 
 FindPath.o : FindPath.c Graph.h List.h
 	gcc -c -std=c99 -Wall FindPath.c
+
+GraphTest : GraphTest.o Graph.o List.o
+	gcc -o GraphTest GraphTest.o Graph.o List.o
+
+GraphTest.o : GraphTest.c Graph.h List.h
+	gcc -c -std=c99 -Wall GraphTest.c
 
 Graph.o : Graph.c Graph.h List.h
 	gcc -c -std=c99 -Wall Graph.c
