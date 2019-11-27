@@ -8,11 +8,8 @@
 //-----------------------------------------------------------------------------
 #include <stdio.h>
 #include <stdlib.h>
-#include "List.h"
 #include "Graph.h"
 
-#define INF -1
-#define NIL 0
 #define WHITE 1
 #define GRAY 2
 #define BLACK 3
@@ -48,7 +45,7 @@ Graph newGraph(int n) {
         G->adj[i] = newList();
         G->color[i] = WHITE;
         G->parent[i] = NIL;
-        G->distance = INF;
+        G->distance[i] = INF;
     }
     return G;
 }
@@ -172,7 +169,7 @@ void addEdge(Graph G, int u, int v) {
     }
     addArc(G, u, v);
     addArc(G, v, u);
-    G->size++;
+    G->size--;
 }
 
 // addArc()
@@ -197,19 +194,24 @@ void addArc(Graph G, int u, int v) {
 }
 
 void BFS(Graph G, int s) {
+    for (int i = 1; i <= getOrder(G); ++i) {
+        G->color[i] = WHITE;
+        G->distance[i] = INF;
+        G->parent[i] = NIL;
+    }
+
+    G->source = s;
     G->color[s] = GRAY;
     G->distance[s] = 0;
     G->parent[s] = NIL;
 
     List Q = newList();
     append(Q, s);
-
     while (length(Q) > 0) {
-        moveFront(Q);
-        int x = get(Q);
+        int x = front(Q);
         deleteFront(Q);
-        for (int i = 0; i < length(G->adj[x]); ++i) {
-            moveFront(G->adj[x]);
+        moveFront(G->adj[x]);
+        while (index(G->adj[x]) >= 0) {
             int y = get(G->adj[x]);
             if (G->color[y] == WHITE) {    // y is undiscovered
                 G->color[y] = GRAY;    // discover y
@@ -217,9 +219,11 @@ void BFS(Graph G, int s) {
                 G->parent[y] = x;
                 append(Q, y);
             }
+            moveNext(G->adj[x]);
         }
         G->color[x] = BLACK;
     }
+    freeList(&Q);
 }
 
 // Other operations -----------------------------------------------------------
@@ -231,7 +235,7 @@ void printGraph(FILE* out, Graph G) {
         fprintf(stderr, "Graph Error: calling printGraph() on NULL Graph reference\n");
         exit(1);
     }
-    for (int i = 1; i < getOrder(G), ++i) {
+    for (int i = 1; i <= getOrder(G); ++i) {
         fprintf(out, "%d: ", i);
         printList(out, G->adj[i]);
         fprintf(out, "\n");
@@ -243,26 +247,23 @@ void getPathHelper(List L, Graph G, int u) {
         append(L, G->source);
     else if (getParent(G, u) != NIL) {
         getPathHelper(L, G, getParent(G, u));
-        append(L, u)
+        append(L, u);
     } else {
         append(L, NIL);
     }
 }
 
 void insertionSort(Graph G, int u, int v) {
-    for(int i = 1; i < length(G->adj[u]); ++i){
-        moveBack(G->adj[u]);
-        int j = i - 1;
-        while(j >= 0 && v < get(G->adj[u])){
-            movePrev(myList);
-            j--;
-        }
-        if(index(G->adj[u]) >= 0){
-            insertAfter(G->adj[u], v);
-        }
-        else{
-            prepend(G->adj[u], v);
-        }
+    moveBack(G->adj[u]);
+    while(index(G->adj[u]) >= 0 && v < get(G->adj[u])){
+        movePrev(G->adj[u]);
     }
+    if(index(G->adj[u]) >= 0){
+        insertAfter(G->adj[u], v);
+    }
+    else{
+        prepend(G->adj[u], v);
+    }
+
 }
 

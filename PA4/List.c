@@ -117,7 +117,7 @@ int front(List L){
         printf("List Error: calling front() on an empty List\n");
         exit(1);
     }
-    return(L->front->data);
+    return L->front->data;
 }
 
 // back()
@@ -132,7 +132,7 @@ int back(List L){
         printf("List Error: calling back() on an empty List\n");
         exit(1);
       }
-      return(L->back->data);
+      return L->back->data;
 }
 
 // get()
@@ -152,7 +152,7 @@ int get(List L){
         printf("List Error: calling get() on undefined cursor\n");
         exit(1);
     }
-    return(L->cursor->data);
+    return L->cursor->data;
 }
 
 // equals()
@@ -505,7 +505,7 @@ void printList(FILE* out, List L){
     }
     Node curr = NULL;
     for(curr = L->front; curr != NULL; curr = curr->next){
-        fprintf(out, "%ld ", curr->data);
+        fprintf(out, "%d ", curr->data);
     }
 }
 

@@ -4,8 +4,12 @@
 
 #ifndef Graph_h
 #define Graph_h
-
 #include <stdio.h>
+#include <stdlib.h>
+#include "List.h"
+
+#define INF -1
+#define NIL 0
 
 typedef struct GraphObj* Graph;
 
