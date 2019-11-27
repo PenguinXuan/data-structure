@@ -37,6 +37,7 @@ int main(int argc, char* argv[]) {
 
     fgets(lines, MAX_LINE, in);
     sscanf(lines, "%d", &n); // get # of vertices
+
     Graph G = newGraph(n);
 
     while (fgets(lines, MAX_LINE, in)) {

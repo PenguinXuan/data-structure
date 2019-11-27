@@ -51,7 +51,7 @@ Graph newGraph(int n) {
 }
 void freeGraph(Graph* pG) {
     if(pG != NULL && *pG != NULL) {
-        for(int i = 1; i <= (*pG)->order; ++i) {
+        for(int i = 0; i <= (*pG)->order; ++i) {
             freeList(&((*pG)->adj[i]));
         }
     }
