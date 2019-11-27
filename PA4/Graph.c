@@ -55,9 +55,9 @@ void freeGraph(Graph* pG) {
             freeList(&((*pG)->adj[i]));
         }
     }
-    free(&(*pG)->color);
-    free(&(*pG)->parent);
-    free(&(*pG)->distance);
+    free((*pG)->color);
+    free((*pG)->parent);
+    free((*pG)->distance);
     free(*pG);
     *pG = NULL;
 }
