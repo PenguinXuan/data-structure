@@ -33,10 +33,16 @@ typedef struct GraphObj {
 // Constructors-Destructors ---------------------------------------------------
 Graph newGraph(int n) {
     Graph G = malloc(sizeof(GraphObj));
+    /*
     G->adj = calloc(n+1, sizeof(List));
     G->color = calloc(n+1, sizeof(int));
     G->parent = calloc(n+1, sizeof(int));
     G->distance = calloc(n+1, sizeof(int));
+     */
+    G->adj = malloc(sizeof(List));
+    G->color = malloc(sizeof(int));
+    G->parent = malloc(sizeof(int));
+    G->distance = malloc(sizeof(int));
     G->order = n;
     G->size = 0;
     G->source = NIL;
@@ -51,7 +57,7 @@ Graph newGraph(int n) {
 }
 void freeGraph(Graph* pG) {
     if(pG != NULL && *pG != NULL) {
-        for(int i = 0; i <= (*pG)->order; ++i) {
+        for(int i = 1; i <= (*pG)->order; ++i) {
             freeList(&((*pG)->adj[i]));
         }
     }
