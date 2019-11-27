@@ -38,7 +38,7 @@ Graph newGraph(int n) {
     G->color = calloc(n+1, sizeof(int));
     G->parent = calloc(n+1, sizeof(int));
     G->distance = calloc(n+1, sizeof(int));*/
-    G->adj = calloc(n+1, sizeof(List));
+    G->adj = malloc(sizeof(List)*(n+1));
     G->color = malloc(sizeof(int)*(n+1));
     G->parent = malloc(sizeof(int)*(n+1));
     G->distance = malloc(sizeof(int)*(n+1));
