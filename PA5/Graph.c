@@ -14,8 +14,8 @@
 #define GRAY 2
 #define BLACK 3
 
-void getPathHelper(List L, Graph G, int u);
 void insertionSort(Graph G, int u, int v);
+void Visit(Graph G, List S, int x, int *time);
 
 // structs --------------------------------------------------------------------
 // private GraphObj type
@@ -23,29 +23,30 @@ typedef struct GraphObj {
     List *adj;
     int *color;
     int *parent;
-    int *distance;
+    int *discover;
+    int *finish;
     int order;  // the number of vertices.
     int size;   // the number of edges.
-    int source; // the label of the vertex that was most recently used as source for BFS.
     
 } GraphObj;
 
 // Constructors-Destructors ---------------------------------------------------
 Graph newGraph(int n) {
     Graph G = malloc(sizeof(GraphObj));
-    G->adj = malloc(sizeof(List)*(n+1));
-    G->color = calloc(n+1, sizeof(int));
-    G->parent = calloc(n+1, sizeof(int));
-    G->distance = calloc(n+1, sizeof(int));
+    G->adj = malloc(sizeof(List) * (n + 1));
+    G->color = calloc(n + 1, sizeof(int));
+    G->parent = calloc(n + 1, sizeof(int));
+    G->discover = calloc(n + 1, sizeof(int));
+    G->finish = calloc(n + 1, sizeof(int));
     G->order = n;
     G->size = 0;
-    G->source = NIL;
     
     for(int i = 1; i <= n; ++i) {
         G->adj[i] = newList();
         G->color[i] = WHITE;
         G->parent[i] = NIL;
-        G->distance[i] = INF;
+        G->discover[i] = UNDEF;
+        G->finish[i] = UNDEF;
     }
     return G;
 }
@@ -58,7 +59,8 @@ void freeGraph(Graph* pG) {
     free((*pG)->adj);
     free((*pG)->color);
     free((*pG)->parent);
-    free((*pG)->distance);
+    free((*pG)->discover);
+    free((*pG)->finish);
     free(*pG);
     *pG = NULL;
 }
@@ -100,23 +102,25 @@ int getParent(Graph G, int u) {
     
 }
 
-
-int getDiscover(Graph G) {
+// getDiscover()
+// Return the discover time of vertex u
+int getDiscover(Graph G, int u) {
     if(G == NULL) {
-        fprintf(stderr, "Graph Error: calling getSource() on NULL Graph reference\n");
+        fprintf(stderr, "Graph Error: calling getDiscover() on NULL Graph reference\n");
         exit(1);
     }
+    return G->discover[u];
 
 }
 
-
+// getFinish()
+// Return the finish time of vertex u
 int getFinish(Graph G, int u) {
     if(G == NULL) {
-        fprintf(stderr, "Graph Error: calling getDist() on NULL Graph reference\n");
+        fprintf(stderr, "Graph Error: calling getFinish() on NULL Graph reference\n");
         exit(1);
     }
- 
-   
+    return G->finish[u];
 }
 
 // Manipulation procedures ----------------------------------------------------
@@ -160,12 +164,90 @@ void addArc(Graph G, int u, int v) {
     G->size++;
 }
 
-void DFS(Graph G, List S);
+// DFS()
+// Performs the depth first search algorithm on G.
+// Pre: length(S) == n, where n = getOrder(G).
+void DFS(Graph G, List S) {
+    if (G == NULL) {
+        fprintf(stderr, "Graph Error: calling DFS() on NULL Graph reference\n");
+        exit(1);
+    }
+    if (length(S) != getOrder(G)) {
+        fprintf(stderr, "Graph Error: calling DFS() on invalid source\n");
+        exit(1);
+    }
+    for (int i = 1; i <= getOrder(G); ++i) {
+        G->color[i] = WHITE;
+        G->parent[i] = NIL;
+    }
+    int time = 0;
+    List SCopy = copyGraph(S);
+    clear(S);
+    moveFront(SCopy);
+    while (index(SCopy) >= 0) {
+        int x = get(SCopy);
+        if (G->color[x] == WHITE) {
+            Visit(G, S, x, &time);
+        }
+        moveNext(S);
+    }
+    freeList(&SCopy);
+
+}
+void Visit(Graph G, List S, int x, int *time) {
+    G->discover[x] = ++(*time);   // discover u
+    G->color[x] = GRAY;
+    moveFront(G->adj[x]);
+    while (index(G->adj[x]) >= 0) {
+        int y = get(G->adj[x]);
+        if (G->color[y] == WHITE) {
+            G->parent[y] = x;
+            Visit(G, S, y, &time);
+        }
+        moveNext(G->adj[x]);
+    }
+    G->color[x] = BLACK;
+    G->finish[x] = ++(*time);  // finish u
+    append(S, x);
+}
 
 
 // Other operations -----------------------------------------------------------
-Graph transpose(Graph G);
-Graph copyGraph(Graph G);
+
+// transpose()
+// Returns a reference to a new graph object representing the transpose of G.
+Graph transpose(Graph G) {
+    if (G == NULL) {
+        fprintf(stderr, "Graph Error: calling DFS() on NULL Graph reference\n");
+        exit(1);
+    }
+    int n = getOrder(G);
+    Graph NEW = newGraph(n);
+    for (int i = 1; i <= n; ++i) {
+        moveFront(G->adj[i]);
+        while (index(G->adj[i])>= 0) {
+            int y = get(G->adj[i]);
+            addArc(NEW, y, i);
+            moveNext(G->adj[i]);
+        }
+    }
+    return NEW;
+}
+
+// copyGraph()
+// Returns a reference to a new graph which is a copy of G.
+Graph copyGraph(Graph G) {
+    int n = getOrder(G);
+    Graph GCopy = newGraph(n);
+    for (int i = 1; i <= n; ++i) {
+        GCopy->adj[i] = copyList(G->adj[i]);
+        GCopy->color[i] = copyList(G->color[i]);
+        GCopy->parent[i] = copyList(G->parent[i]);
+        GCopy->discover[i] = copyList(G->discover[i]);
+        GCopy->finish[i] = copyList(G->finish[i]);
+    }
+    return GCopy;
+}
 
 // printGraph()
 // prints the adjacency list representation of G to the file pointed to by out.

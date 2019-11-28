@@ -37,6 +37,10 @@ int main(int argc, char* argv[]) {
 
     fgets(lines, MAX_LINE, in);
     sscanf(lines, "%d", &n); // get # of vertices
+    List S = newList();
+    for (int i = 1; i <= n; ++i) {
+        append(S, i);
+    }
 
     Graph G = newGraph(n);
 
@@ -52,37 +56,45 @@ int main(int argc, char* argv[]) {
 
     printGraph(out, G);
     fprintf(out, "\n");
-    
-    /*
-    while (fgets(lines, MAX_LINE, in)) {
-        char *x = strtok(lines, " ");
-        char *y = strtok(NULL, " ");
-        int s = atoi(x);
-        int d = atoi(y);
-        if (s == 0 && d == 0)
-            break;
-        BFS(G, s);
-        List L = newList();
-        getPath(L, G, d);
 
-        if (getDist(G, d) == INF) {
-            fprintf(out, "The distance from %d to %d is infinity\n", s, d);
-        }  else {
-            fprintf(out, "The distance from %d to %d is %d\n", s, d, getDist(G, d));
-        }
-        if (front(L) == NIL) {
-            fprintf(out, "No %d-%d path exists\n", s, d);
-        }  else {
-            fprintf(out, "A shortest %d-%d path is: ", s, d);
-            printList(out, L);
+    DFS(G, S);
+    Graph T =  transpose(G);
+    DFS(T, S);
 
+    int numOfComponents = 0;
+    moveFront(S);
+    while(index(S) >= 0) {
+        int x = get(S);
+        if (getParent(T, x) == NIL) {
+            ++numOfComponents;
         }
-        fprintf(out, "\n");
-        fprintf(out, "\n");
-        freeList(&L);
-    }*/
+        moveNext(S);
+    }
+    fprintf(out, "G contains %d strongly connected components: ", numOfComponents);
+
+    List *C = malloc(sizeof(List) * numOfComponents);
+    for (int i = 0; i < numOfComponents; ++i) {
+        C[i] = newList();
+    }
+
+    moveBack(S);
+    for (int i = 0; i < numOfComponents; ++i) {
+        while (index(S) >= 0 && get(S) != NIL) {
+            int x = get(S);
+            append(C[i], x);
+            deleteBack(S);
+        }
+    }
+
+    for (int i = 0; i < numOfComponents; ++i) {
+        fprintf(out, "Component %d: ", i + 1)
+        printList(out, C[i]);
+        freeList(&((C[i]));
+    }
 
     freeGraph(&G);
+    freeGraph(&T);
+    free(&C);
     fclose(in);
     fclose(out);
 

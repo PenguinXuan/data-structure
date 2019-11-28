@@ -10,6 +10,7 @@
 
 #define INF -1
 #define NIL 0
+#define UNDEF -2
 
 typedef struct GraphObj* Graph;
 
