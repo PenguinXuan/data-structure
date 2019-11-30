@@ -241,10 +241,10 @@ Graph copyGraph(Graph G) {
     Graph GCopy = newGraph(n);
     for (int i = 1; i <= n; ++i) {
         GCopy->adj[i] = copyList(G->adj[i]);
-        GCopy->color[i] = copyList(G->color[i]);
-        GCopy->parent[i] = copyList(G->parent[i]);
-        GCopy->discover[i] = copyList(G->discover[i]);
-        GCopy->finish[i] = copyList(G->finish[i]);
+        GCopy->color[i] = G->color[i];
+        GCopy->parent[i] = G->parent[i];
+        GCopy->discover[i] = G->discover[i];
+        GCopy->finish[i] = G->finish[i];
     }
     return GCopy;
 }
