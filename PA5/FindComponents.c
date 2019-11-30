@@ -54,6 +54,7 @@ int main(int argc, char* argv[]) {
         addArc(G, u, v);
     }
 
+    fprintf(out, "Adjacency list representation of G:\n");
     printGraph(out, G);
     fprintf(out, "\n");
 
@@ -70,7 +71,7 @@ int main(int argc, char* argv[]) {
         }
         moveNext(S);
     }
-    fprintf(out, "G contains %d strongly connected components: ", numOfComponents);
+    fprintf(out, "G contains %d strongly connected components:\n", numOfComponents);
 
     List *C = malloc(sizeof(List) * numOfComponents);
     for (int i = 0; i < numOfComponents; ++i) {
@@ -79,22 +80,28 @@ int main(int argc, char* argv[]) {
 
     moveBack(S);
     for (int i = 0; i < numOfComponents; ++i) {
-        while (index(S) >= 0 && get(S) != NIL) {
+        while (index(S) >= 0) {
             int x = get(S);
-            append(C[i], x);
+            prepend(C[i], x);
+            movePrev(S);
             deleteBack(S);
+            if (getParent(T, x) == NIL) {
+                break;
+            }
+
         }
     }
 
     for (int i = 0; i < numOfComponents; ++i) {
-        fprintf(out, "Component %d: ", i + 1)
+        fprintf(out, "Component %d: ", i + 1);
         printList(out, C[i]);
-        freeList(&((C[i]));
+        fprintf(out, "\n");
+        freeList(&(C[i]));
     }
 
     freeGraph(&G);
     freeGraph(&T);
-    free(&C);
+    free(C);
     fclose(in);
     fclose(out);
 

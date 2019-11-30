@@ -181,7 +181,7 @@ void DFS(Graph G, List S) {
         G->parent[i] = NIL;
     }
     int time = 0;
-    List SCopy = copyGraph(S);
+    List SCopy = copyList(S);
     clear(S);
     moveFront(SCopy);
     while (index(SCopy) >= 0) {
@@ -189,7 +189,7 @@ void DFS(Graph G, List S) {
         if (G->color[x] == WHITE) {
             Visit(G, S, x, &time);
         }
-        moveNext(S);
+        moveNext(SCopy);
     }
     freeList(&SCopy);
 
@@ -202,13 +202,13 @@ void Visit(Graph G, List S, int x, int *time) {
         int y = get(G->adj[x]);
         if (G->color[y] == WHITE) {
             G->parent[y] = x;
-            Visit(G, S, y, &time);
+            Visit(G, S, y, time);
         }
         moveNext(G->adj[x]);
     }
     G->color[x] = BLACK;
     G->finish[x] = ++(*time);  // finish u
-    append(S, x);
+    prepend(S, x);
 }
 
 
@@ -263,6 +263,19 @@ void printGraph(FILE* out, Graph G) {
     }
 }
 
+void insertionSort(Graph G, int u, int v) {
+    moveBack(G->adj[u]);
+    while(index(G->adj[u]) >= 0 && v < get(G->adj[u])){
+        movePrev(G->adj[u]);
+    }
+    if(index(G->adj[u]) >= 0){
+        insertAfter(G->adj[u], v);
+    }
+    else{
+        prepend(G->adj[u], v);
+    }
+
+}
 
 
 
