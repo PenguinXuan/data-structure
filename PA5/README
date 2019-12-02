@@ -1,0 +1,30 @@
+// Zhuoxuan Wang
+// CruzID: zwang437
+// CSE 101, Fall 2019
+// PA5
+
+Included Files:
+
+FindComponent.c
+A top level client of Graph ADT.
+
+Graph.c
+Graph ADT finds the strongly connected components of a digraph.
+
+Graph.h
+Contains the prototypes for Graph functions.
+
+GraphTest
+Test the Graph ADT.
+
+List.c
+A doubly linked list List ADT.
+
+List.h 
+Contains the prototypes for List functions.
+
+Makefile
+Makefile for Pa4.
+
+README
+A description of the files for this program.
