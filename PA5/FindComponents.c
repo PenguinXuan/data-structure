@@ -99,9 +99,10 @@ int main(int argc, char* argv[]) {
         freeList(&(C[i]));
     }
 
+    free(C);
+    freeList(&S);
     freeGraph(&G);
     freeGraph(&T);
-    free(C);
     fclose(in);
     fclose(out);
 

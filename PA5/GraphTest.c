@@ -7,95 +7,113 @@
 #include "Graph.h"
 
 int main(int argc, char* argv[]) {
-    Graph G1 = newGraph(7);
+    Graph G = newGraph(7);
+    
+    addArc(G, 1, 4);
+    addArc(G, 1, 5);
+    addArc(G, 4, 5);
+    addArc(G, 2, 3);
+    addArc(G, 2, 6);
+    addArc(G, 3, 7);
+    addArc(G, 6, 7);
 
-    addEdge(G1, 1, 4);
-    addEdge(G1, 1, 5);
-    addEdge(G1, 4, 5);
-    addEdge(G1, 2, 3);
-    addEdge(G1, 2, 6);
-    addEdge(G1, 3, 7);
-    addEdge(G1, 6, 7);
+    fprintf(stdout, "Directed Graph:\n");
+    printGraph(stdout, G);
+    fprintf(stdout, "\n");
+    
+    List S = newList();
+    for (int i = 1; i <= 7; ++i) {
+        append(S, i);
+    }
+    
+    DFS(G, S);
+    
+    fprintf(stdout, "Size: %d\n", getSize(G));
+    fprintf(stdout, "Order: %d\n", getOrder(G));
+    fprintf(stdout, "\n");
+    
+    for (int i =  1; i <= 7; ++i) {
+       fprintf(stdout, "Parent of %d: %d\n", i, getParent(G, i));
+       fprintf(stdout, "Discover time of %d: %d\n", i, getDiscover(G, i));
+       fprintf(stdout, "Finish time of %d: %d\n",  i, getFinish(G, i));
+       fprintf(stdout, "\n");
+    }
+    
+    Graph T = transpose(G);
+    fprintf(stdout, "Transpose of G:\n");
+    printGraph(stdout, T);
+    
+    fprintf(stdout, "\n");
+    
+    
+    Graph C = copyGraph(G);
+    fprintf(stdout, "Copy of G:\n");
+    printGraph(stdout, C);
+    
+    freeList(&S);
+    freeGraph(&C);
+    freeGraph(&T);
+    freeGraph(&G);
 
-    printf("Undirected Graph:\n");
-    printGraph(stdout, G1);
-
-    BFS(G1, 2);
-    List L1 = newList();
-    getPath(L1, G1, 7);
-
-    printf("The distance from %d to %d is %d\n", 2, 7, getDist(G1, 7));
-    printf("A shortest %d-%d path is: ", 2, 7);
-    printList(stdout, L1);
-    printf("\n");
-
-    printf("Size: %d\n", getSize(G1));
-    printf("Order: %d\n", getOrder(G1));
-    printf("Parent of 7 is: %d\n", getParent(G1, 7));
-    printf("Source: %d\n", getSource(G1));
-    printf("\n");
-
-    Graph G2 = newGraph(7);
-
-    addArc(G2, 1, 4);
-    addArc(G2, 1, 5);
-    addArc(G2, 4, 5);
-    addArc(G2, 2, 3);
-    addArc(G2, 2, 6);
-    addArc(G2, 3, 7);
-    addArc(G2, 6, 7);
-
-    printf("Directed Graph:\n");
-    printGraph(stdout, G2);
-
-    BFS(G2, 2);
-    List L2 = newList();
-    getPath(L2, G2, 7);
-
-    printf("The distance from %d to %d is %d\n", 2, 7, getDist(G2, 7));
-    printf("A shortest %d-%d path is: ", 2, 7);
-    printList(stdout, L2);
-    printf("\n");
-
-    printf("Size: %d\n", getSize(G2));
-    printf("Order: %d\n", getOrder(G2));
-    printf("Parent of 7 is: %d\n", getParent(G2, 7));
-    printf("Source: %d\n", getSource(G2));
-
-    freeList(&L1);
-    freeList(&L2);
-    freeGraph(&G1);
-    freeGraph(&G2);
 
 }
 /*OUTPUT:
- Undirected Graph:
-1: 4 5
-2: 3 6
-3: 2 7
-4: 1 5
-5: 1 4
-6: 2 7
-7: 3 6
-The distance from 2 to 7 is 2
-A shortest 2-7 path is: 2 3 7
-Size: 7
-Order: 7
-Parent of 7 is: 3
-Source: 2
+ Directed Graph:
+ 1: 4 5
+ 2: 3 6
+ 3: 7
+ 4: 5
+ 5:
+ 6: 7
+ 7:
 
-Directed Graph:
-1: 4 5
-2: 3 6
-3: 7
-4: 5
-5:
-6: 7
-7:
-The distance from 2 to 7 is 2
-A shortest 2-7 path is: 2 3 7
-Size: 7
-Order: 7
-Parent of 7 is: 3
-Source: 2
+ Size: 7
+ Order: 7
+
+ Parent of 1: 0
+ Discover time of 1: 1
+ Finish time of 1: 6
+
+ Parent of 2: 0
+ Discover time of 2: 7
+ Finish time of 2: 14
+
+ Parent of 3: 2
+ Discover time of 3: 8
+ Finish time of 3: 11
+
+ Parent of 4: 1
+ Discover time of 4: 2
+ Finish time of 4: 5
+
+ Parent of 5: 4
+ Discover time of 5: 3
+ Finish time of 5: 4
+
+ Parent of 6: 2
+ Discover time of 6: 12
+ Finish time of 6: 13
+
+ Parent of 7: 3
+ Discover time of 7: 9
+ Finish time of 7: 10
+
+ Transpose of G:
+ 1:
+ 2:
+ 3: 2
+ 4: 1
+ 5: 1 4
+ 6: 2
+ 7: 3 6
+
+ Copy of G:
+ 1: 4 5
+ 2: 3 6
+ 3: 7
+ 4: 5
+ 5:
+ 6: 7
+ 7:
+
 */
